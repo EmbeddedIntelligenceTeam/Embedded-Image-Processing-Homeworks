@@ -1,114 +1,237 @@
-#  EE4065 – Embedded Image Processing
+# 🧠 EE4065 – Embedded Digital Image Processing
 ### **Homework 1**
- **Due Date:** November 7, 2025 — 23:59  
- **Team Members:**  
+📅 **Due Date:** November 7, 2025 — 23:59  
+👥 **Team Members:**  
 - Taner Kahyaoğlu  
-- Yusuf Zivaroğlu
+- Yusuf Zivaroğlu  
 
 ---
 
-##  Description
-This repository contains the implementation, source codes, and documentation for **Homework 1** of the *EE4065 Embedded Image Processing* course.  
-The project combines **Python-based image preprocessing** and **STM32 embedded execution** to perform grayscale image display and intensity transformation analysis.
+## 📘 Description  
+This project demonstrates the process of converting an image into a grayscale `.h` header file using Python,  
+then applying various pixel intensity transformations (Negative, Thresholding, Gamma, Piecewise Linear)  
+on STM32 via STM32CubeIDE, and observing the results through the **Memory Window**.
 
 ---
 
-##  Homework Tasks
+## 🧩 Q1 — Grayscale Image Formation (40 pts)
 
-### **Q1 – Grayscale Image Formation (40 points)**  
-- Create a **grayscale image** on your PC with a suitable size.  
-- Convert it to a **header file (`.h`)** containing the pixel array.  
-- Add this header file to your STM32 project and observe the image data in memory.
+### 🔹 Objective  
+Convert a selected image into grayscale and store it as a `.h` header file to visualize in STM32 memory.
 
 ---
 
-### **Q2 – Intensity Transformations (60 points)**  
-Implement and verify the following transformations:
+### 🔹 Python Code — *convert.py*
+```python
+from PIL import Image
+import os
 
-| Part | Transformation Type | Description |
-|------|---------------------|--------------|
-| 2a | Negative Image | Invert all pixel intensities |
-| 2b | Thresholding | Apply thresholding to create binary output |
-| 2c | Gamma Correction | Perform gamma adjustment with γ = 3 and γ = 1/3 |
-| 2d | Piecewise Linear | Implement piecewise linear mapping using threshold value |
+IMAGE_FILE = "lena_gray.png"  # Name of the image you will convert
+OUTPUT_FILE = "image_data.h"  # Name of the output .h file
+ARRAY_NAME = "my_image_data"  # Name of the C array
+WIDTH = 128
+HEIGHT = 128
+# ----------------------
 
- Results are observed using **Memory Window** under **STM32CubeIDE**.
+# 1. Open the image, convert to grayscale ('L' mode), and resize
+img = Image.open(IMAGE_FILE).convert('L').resize((WIDTH, HEIGHT))
+
+# 2. Get the pixels as a list
+pixels = list(img.getdata())
+
+# 3. Create the .h file and write into it
+with open(OUTPUT_FILE, 'w') as f:
+    f.write(f"// Image: {IMAGE_FILE}, Size: {WIDTH}x{HEIGHT}\n")
+    f.write(f"unsigned char {ARRAY_NAME}[{len(pixels)}] = {{\n ")
+
+    # Write pixels line by line for readability
+    for i, pixel in enumerate(pixels):
+        f.write(f"{pixel}, ")
+        if (i + 1) % 16 == 0:  # 16 pixels per line
+            f.write("\n ")
+
+    f.write("\n};\n")
+
+print(f"'{OUTPUT_FILE}' file was created successfully!")
+```
 
 ---
 
-
-##  Project Execution Workflow
-
-This section explains the complete development and execution process step-by-step.
-
-###  Step 1 — Preparing the Environment
-1. Open **Command Prompt (CMD)**.  
-2. Install the Python image library:
+### 🔹 Execution Steps  
+1. Open **Command Prompt (CMD)**  
+2. Install Pillow library:  
    ```bash
    pip install Pillow
    ```
-3. Place the image you want to convert (e.g., `input_image.jpg`) in the same folder as `convert.py`.
-
----
-
-###  Step 2 — Generating the Header File
-1. Run the conversion script:
+3. Place your image (`lena_gray.png`) in the same directory as `convert.py`  
+4. Run the script:  
    ```bash
    python convert.py
    ```
-2. The script creates:
+5. The file `image_data.h` will be generated automatically and placed under:  
    ```
-   image_data.h
+   python image converter/
    ```
-   — a header file containing the image’s grayscale pixel array.
+6. Move the generated `.h` file into STM32 project path:  
+   ```
+   HW1/STM32CubeIDE/Core/Inc/
+   ```
 
 ---
 
-###  Step 3 — STM32 Project Setup
-1. Create a new STM32 project in **STM32CubeIDE**.  
-2. Copy the generated `image_data.h` file into:
-   ```
-   Core/Inc/
-   ```
-3. Include the header in `main.c` and write the code to process or display pixel data.
+### 🔹 Results  
+
+🖼️ **Original Grayscale Image:**  
+`python image converter/lena_gray.png`  
+![Lena Gray](python%20image%20converter/lena_gray.png)
+
+💾 **Memory Observation:**  
+`results/my_image_data under the memory window.png`  
+![Memory Window](results/my_image_data%20under%20the%20memory%20window.png)
 
 ---
 
-###  Step 4 — Debugging and Memory Observation
-1. Build and run the project in **Debug Mode**.  
-2. Open the **Memory Window** in STM32CubeIDE.  
-3. Observe the pixel intensity data directly from the MCU memory.
+## 🧩 Q2 — Intensity Transformations (60 pts)
+
+### 🔹 Objective  
+Implement and verify pixel intensity transformations in STM32CubeIDE by observing memory values.
 
 ---
 
-###  Step 5 — Question 2 (Intensity Transformations)
-All transformation codes are included in the main source but **commented out** for clarity.
+### 🔹 STM32 Project Setup  
+Add the generated header file into your STM32 project includes:
 
-Within your `main.c`, find:
+```c
+/* USER CODE BEGIN Includes */
+#include "image_data.h"
+#include <math.h>
+/* USER CODE END Includes */
+```
+
+---
+
+### 🔹 STM32 Code (main.c)
 ```c
 /* USER CODE BEGIN 2 */
-// 2a - Negative Image
-// 2b - Thresholding
-// 2c - Gamma Correction (γ = 3, γ = 1/3)
-// 2d - Piecewise Linear Transformation
+volatile unsigned char dummy_pixel = my_image_data[0];
+
+#define IMAGE_WIDTH  128
+#define IMAGE_HEIGHT 128
+#define IMAGE_SIZE   (IMAGE_WIDTH * IMAGE_HEIGHT)
+
+unsigned char output_image[IMAGE_SIZE];
+
+// 2a Negative Image Transformation
+/* for (int i = 0; i < IMAGE_SIZE; i++) {
+     output_image[i] = 255 - my_image_data[i];
+ }*/
+
+// 2b Thresholding Image Transformation
+/*int threshold_value = 128;
+for (int i = 0; i < IMAGE_SIZE; i++) {
+    unsigned char r = my_image_data[i];
+    if (r > threshold_value) {
+        output_image[i] = 255; // greater than threshold → white
+    } else {
+        output_image[i] = 0;   // smaller → black
+    }
+}*/
+
+// 2c Gamma Correction Transformation
+/*float gamma_value = 1.0/3.0; // Gamma value
+for (int i = 0; i < IMAGE_SIZE; i++) {
+    float r_normalized = (float)my_image_data[i] / 255.0;
+    float s_normalized = powf(r_normalized, gamma_value);
+    output_image[i] = (unsigned char)(s_normalized * 255.0);
+}*/
+
+// 2d Piecewise Linear Transformation
+/*int r1 = 80;
+int s1 = 0;
+int r2 = 170;
+int s2 = 255;
+float slope = (float)(s2 - s1) / (float)(r2 - r1);
+
+for (int i = 0; i < IMAGE_SIZE; i++) {
+    unsigned char r = my_image_data[i];
+    if (r <= r1) {
+        output_image[i] = s1;
+    }
+    else if (r >= r2) {
+        output_image[i] = s2;
+    }
+    else {
+        output_image[i] = (unsigned char)((float)(r - r1) * slope + (float)s1);
+    }
+}*/
+
+// Prevent optimization
+volatile unsigned char dummy_output_pixel = output_image[0];
 /* USER CODE END 2 */
 ```
 
-To test a specific part:
-1. Uncomment the relevant section (`2a`, `2b`, `2c`, or `2d`).  
-2. Rebuild and run in **Debug Mode**.  
-3. Observe corresponding transformations in the **Memory Window**.
+---
+
+### 🔹 How to Run  
+1. Uncomment one transformation block at a time (2a–2d).  
+2. Build and run in **Debug Mode**.  
+3. Open the **Memory Window** and monitor pixel value changes.  
 
 ---
 
-##  Summary
-- `convert.py` converts images into C-compatible header files.  
-- STM32CubeIDE project loads and manipulates this image data.  
-- Each question step can be verified visually through the memory view.  
-- Commented code sections make it easy to switch between transformation types.
+### 🔹 Results  
+
+#### 🧪 2a — Negative Image  
+- **Description:** Inverts all pixel intensities → bright areas become dark and vice versa.  
+📸 Result:  
+`results/output_image under the memory window for negative intesity transformation.png`  
+![Negative Transformation](results/output_image%20under%20the%20memory%20window%20for%20negative%20intesity%20transformation.png)
 
 ---
 
-##  Submission Notes
-- This GitHub repository is **private** and shared only with the course instructors.  
-- Commit history shows incremental progress on both Python preprocessing and STM32 embedded tasks.
+#### 🧪 2b — Thresholding  
+- **Description:** If pixel intensity > threshold → WHITE, else BLACK.  
+📸 Result:  
+`results/output_image under the memory window for tresholding intesity transformation.png`  
+![Thresholding Transformation](results/output_image%20under%20the%20memory%20window%20for%20tresholding%20intesity%20transformation.png)
+
+---
+
+#### 🧪 2c — Gamma Correction  
+- **Description:** Adjust image brightness using γ = 3 and γ = 1/3.  
+
+📸 Gamma = 3:  
+`results/output_image under the memory window for Gamma correction with gamma being 3 intesity transformation.png`  
+![Gamma 3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%203%20intesity%20transformation.png)
+
+📸 Gamma = 1/3:  
+`results/output_image under the memory window for Gamma correction with gamma being 1 over 3 intesity transformation.png`  
+![Gamma 1/3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%201%20over%203%20intesity%20transformation.png)
+
+---
+
+#### 🧪 2d — Piecewise Linear  
+- **Description:** Adjust contrast by defining two linear regions (below and above threshold).  
+📸 Result:  
+`results/output_image under the memory window for Piecewise linear intesity transformation.png`  
+![Piecewise Linear](results/output_image%20under%20the%20memory%20window%20for%20Piecewise%20linear%20intesity%20transformation.png)
+
+---
+
+## 🧮 Observations  
+- Pixel value distributions in **Memory Window** verified that transformations behaved correctly.  
+- The system successfully mapped grayscale data to transformed arrays in STM32 memory.  
+- All results corresponded with expected theoretical transformations.
+
+---
+
+## ✅ Summary  
+- **Python:** Converted an image to grayscale and exported as `.h` array.  
+- **STM32:** Applied transformations and verified results via debug memory inspection.  
+- **Outcome:** Every transformation (2a–2d) visually confirmed in memory.  
+
+---
+
+## 📬 Submission Notes  
+- This `README.md` file contains the complete project report, including all explanations, code, and result images.  
+- Repository is private and shared only with the course instructors.
