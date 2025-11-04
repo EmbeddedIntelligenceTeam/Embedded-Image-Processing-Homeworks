@@ -193,7 +193,7 @@ volatile unsigned char dummy_output_pixel = output_image[0];
 - **Description:** If pixel intensity > threshold → WHITE, else BLACK.  
  Result:  
 `results/output_image under the memory window for tresholding intesity transformation.png`  
-![Thresholding Transformation](results/output_image%20under%20the%20memory%20window%20for%20tresholding%20intesity%20transformation.png)
+![Thresholding Transformation](results/output_image%20under%20the%20memory%20window%20for%20tresholding%20intensity%20transformation.png)
 
 ---
 
