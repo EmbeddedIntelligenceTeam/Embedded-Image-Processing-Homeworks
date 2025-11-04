@@ -184,15 +184,15 @@ volatile unsigned char dummy_output_pixel = output_image[0];
 ####  2a — Negative Image  
 - **Description:** Inverts all pixel intensities → bright areas become dark and vice versa.  
  Result:  
-`results/output_image under the memory window for negative intesity transformation.png`  
-![Negative Transformation](results/output_image%20under%20the%20memory%20window%20for%20negative%20intesity%20transformation.png)
+`results/output_image under the memory window for negative intensity transformation.png`  
+![Negative Transformation](results/output_image%20under%20the%20memory%20window%20for%20negative%20intensity%20transformation.png)
 
 ---
 
 ####  2b — Thresholding  
 - **Description:** If pixel intensity > threshold → WHITE, else BLACK.  
  Result:  
-`results/output_image under the memory window for tresholding intesity transformation.png`  
+`results/output_image under the memory window for tresholding intensity transformation.png`  
 ![Thresholding Transformation](results/output_image%20under%20the%20memory%20window%20for%20tresholding%20intensity%20transformation.png)
 
 ---
@@ -201,20 +201,20 @@ volatile unsigned char dummy_output_pixel = output_image[0];
 - **Description:** Adjust image brightness using γ = 3 and γ = 1/3.  
 
  Gamma = 3:  
-`results/output_image under the memory window for Gamma correction with gamma being 3 intesity transformation.png`  
-![Gamma 3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%203%20intesity%20transformation.png)
+`results/output_image under the memory window for Gamma correction with gamma being 3 intensity transformation.png`  
+![Gamma 3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%203%20intensity%20transformation.png)
 
  Gamma = 1/3:  
-`results/output_image under the memory window for Gamma correction with gamma being 1 over 3 intesity transformation.png`  
-![Gamma 1/3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%201%20over%203%20intesity%20transformation.png)
+`results/output_image under the memory window for Gamma correction with gamma being 1 over 3 intensity transformation.png`  
+![Gamma 1/3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%201%20over%203%20intensity%20transformation.png)
 
 ---
 
 ####  2d — Piecewise Linear  
 - **Description:** Adjust contrast by defining two linear regions (below and above threshold).  
  Result:  
-`results/output_image under the memory window for Piecewise linear intesity transformation.png`  
-![Piecewise Linear](results/output_image%20under%20the%20memory%20window%20for%20Piecewise%20linear%20intesity%20transformation.png)
+`results/output_image under the memory window for Piecewise linear intensity transformation.png`  
+![Piecewise Linear](results/output_image%20under%20the%20memory%20window%20for%20Piecewise%20linear%20intensity%20transformation.png)
 
 ---
 
