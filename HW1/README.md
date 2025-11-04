@@ -1,20 +1,20 @@
-# 🧠 EE4065 – Embedded Digital Image Processing
+#  EE4065 – Embedded Digital Image Processing
 ### **Homework 1**
-📅 **Due Date:** November 7, 2025 — 23:59  
-👥 **Team Members:**  
+ **Due Date:** November 7, 2025 — 23:59  
+ **Team Members:**  
 - Taner Kahyaoğlu  
 - Yusuf Zivaroğlu  
 
 ---
 
-## 📘 Description  
+##  Description  
 This project demonstrates the process of converting an image into a grayscale `.h` header file using Python,  
 then applying various pixel intensity transformations (Negative, Thresholding, Gamma, Piecewise Linear)  
 on STM32 via STM32CubeIDE, and observing the results through the **Memory Window**.
 
 ---
 
-## 🧩 Q1 — Grayscale Image Formation (40 pts)
+##  Q1 — Grayscale Image Formation (40 pts)
 
 ### 🔹 Objective  
 Convert a selected image into grayscale and store it as a `.h` header file to visualize in STM32 memory.
@@ -81,17 +81,17 @@ print(f"'{OUTPUT_FILE}' file was created successfully!")
 
 ### 🔹 Results  
 
-🖼️ **Original Grayscale Image:**  
+ **Original Grayscale Image:**  
 `python image converter/lena_gray.png`  
 ![Lena Gray](python%20image%20converter/lena_gray.png)
 
-💾 **Memory Observation:**  
+ **Memory Observation:**  
 `results/my_image_data under the memory window.png`  
 ![Memory Window](results/my_image_data%20under%20the%20memory%20window.png)
 
 ---
 
-## 🧩 Q2 — Intensity Transformations (60 pts)
+##  Q2 — Intensity Transformations (60 pts)
 
 ### 🔹 Objective  
 Implement and verify pixel intensity transformations in STM32CubeIDE by observing memory values.
@@ -181,57 +181,57 @@ volatile unsigned char dummy_output_pixel = output_image[0];
 
 ### 🔹 Results  
 
-#### 🧪 2a — Negative Image  
+####  2a — Negative Image  
 - **Description:** Inverts all pixel intensities → bright areas become dark and vice versa.  
-📸 Result:  
+ Result:  
 `results/output_image under the memory window for negative intesity transformation.png`  
 ![Negative Transformation](results/output_image%20under%20the%20memory%20window%20for%20negative%20intesity%20transformation.png)
 
 ---
 
-#### 🧪 2b — Thresholding  
+####  2b — Thresholding  
 - **Description:** If pixel intensity > threshold → WHITE, else BLACK.  
-📸 Result:  
+ Result:  
 `results/output_image under the memory window for tresholding intesity transformation.png`  
 ![Thresholding Transformation](results/output_image%20under%20the%20memory%20window%20for%20tresholding%20intesity%20transformation.png)
 
 ---
 
-#### 🧪 2c — Gamma Correction  
+####  2c — Gamma Correction  
 - **Description:** Adjust image brightness using γ = 3 and γ = 1/3.  
 
-📸 Gamma = 3:  
+ Gamma = 3:  
 `results/output_image under the memory window for Gamma correction with gamma being 3 intesity transformation.png`  
 ![Gamma 3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%203%20intesity%20transformation.png)
 
-📸 Gamma = 1/3:  
+ Gamma = 1/3:  
 `results/output_image under the memory window for Gamma correction with gamma being 1 over 3 intesity transformation.png`  
 ![Gamma 1/3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%201%20over%203%20intesity%20transformation.png)
 
 ---
 
-#### 🧪 2d — Piecewise Linear  
+####  2d — Piecewise Linear  
 - **Description:** Adjust contrast by defining two linear regions (below and above threshold).  
-📸 Result:  
+ Result:  
 `results/output_image under the memory window for Piecewise linear intesity transformation.png`  
 ![Piecewise Linear](results/output_image%20under%20the%20memory%20window%20for%20Piecewise%20linear%20intesity%20transformation.png)
 
 ---
 
-## 🧮 Observations  
+##  Observations  
 - Pixel value distributions in **Memory Window** verified that transformations behaved correctly.  
 - The system successfully mapped grayscale data to transformed arrays in STM32 memory.  
 - All results corresponded with expected theoretical transformations.
 
 ---
 
-## ✅ Summary  
+##  Summary  
 - **Python:** Converted an image to grayscale and exported as `.h` array.  
 - **STM32:** Applied transformations and verified results via debug memory inspection.  
 - **Outcome:** Every transformation (2a–2d) visually confirmed in memory.  
 
 ---
 
-## 📬 Submission Notes  
+##  Submission Notes  
 - This `README.md` file contains the complete project report, including all explanations, code, and result images.  
 - Repository is private and shared only with the course instructors.
