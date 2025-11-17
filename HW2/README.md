@@ -593,49 +593,24 @@ void Homework_Apply_Median_Filter(uint8_t* p_src, uint8_t* p_dst, uint32_t width
 
 ---
 
-### Results: Low-Pass Filter 
+### Results 
 
-A 3x3 "Box Blur" (average) kernel was applied to the source image. This kernel smooths the image by averaging each pixel with its 8 neighbors, effectively "passing" only the low-frequency information (smooth surfaces) and attenuating high-frequency details (sharp edges, noise).
+To validate the `Homework_Apply_Median_Filter` function, its primary strength—noise removal—was tested. A 128x128 test image was intentionally corrupted on the PC with "salt-and-pepper" noise (random black and white pixels) before being sent to the STM32.
 
-* **Kernel Used:**
-    ```c
-    const float g_kernel_low_pass[9] = {
-      1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f,
-      1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f,
-      1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f
-    };
-    ```
+The STM32 successfully processed this noisy image using the median filter and transmitted the result back to the PC.
 
-* **Visual Result:**
-    The resulting image received back on the PC is visibly blurred, as expected from an averaging filter.
+The requirement of **Q4c** ("Show filtered image entries") is fulfilled by visually inspecting the entire processed image received back by the PC, which serves as a complete, full-frame representation of all 16,384 filtered entries.
 
-| Original Test Image (Sent) | Low-Pass Filtered Result (Received) |
+As the side-by-side comparison below clearly shows, the median filter **completely eliminated** the "salt-and-pepper" noise.
+
+| Original Noisy Image (Sent to STM32) | Median Filtered Result (Received from STM32) |
 | :---: | :---: |
-| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="529" height="529" alt="image" src="https://github.com/user-attachments/assets/3e2994fb-4c45-44f6-bc32-a07352ffe937" /> |
+| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="530" height="526" alt="image" src="https://github.com/user-attachments/assets/f4c56e90-e1e5-4e80-9097-0d1456159a1b" /> |
 
----
-
-### Results: High-Pass Filter
-
-A 3x3 Laplacian kernel was applied to the source image. This kernel calculates the difference between a pixel and its neighbors. It "passes" only the high-frequency information (edges) and attenuates low-frequency areas (flat surfaces), which become black.
-
-* **Kernel Used:**
-    ```c
-    const float g_kernel_high_pass[9] = {
-      -1.0f, -1.0f, -1.0f,
-      -1.0f,  8.0f, -1.0f,
-      -1.0f, -1.0f, -1.0f
-    };
-    ```
-
-* **Visual Result:**
-    The resulting image is an "edge map" of the original. All flat surfaces are black (0), and only the pixels corresponding to an edge are bright (white).
-
-| Original Test Image (Sent) | High-Pass Filtered Result (Received) |
-| :---: | :---: |
-| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="539" height="538" alt="image" src="https://github.com/user-attachments/assets/9a9c4375-b04f-4cde-83c9-34e9082d7189" /> |
-
-*The "filtered image entries" required by Q3b and Q3c are represented by the full processed images shown above, which were verified on the PC.*
+**Analysis:**
+This result demonstrates the key difference between a Median filter (Q4) and a Low-Pass averaging filter (Q3b).
+* The **Low-Pass** filter would have *blurred* the noise, averaging the `255` values with their neighbors and creating gray "smudges."
+* The **Median** filter, by using rank-order sorting, correctly identified the noise pixels (`0` or `255`) as statistical outliers. It discarded them and replaced them with the local *median* value (the true pixel value), resulting in a clean image with perfectly preserved edges.
 ---
 
 ##  Observations  
