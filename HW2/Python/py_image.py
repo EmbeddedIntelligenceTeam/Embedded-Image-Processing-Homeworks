@@ -1,0 +1,46 @@
+import py_serialimg
+import numpy as np
+import cv2 
+
+COM_PORT = "COM8"  # !!! BURAYI NUCLEO F446RE'YE GÖRE GÜNCELLEYİN !!!
+
+TEST_IMAGE_FILENAME = "lena_gray.png"  
+# --- AYAR SONU ---
+
+print(f"Seri port {COM_PORT} başlatılıyor...")
+py_serialimg.SERIAL_Init(COM_PORT)
+print("Port başlatıldı.")
+
+mandrill = TEST_IMAGE_FILENAME
+
+try:
+    while 1:
+        print("\nSTM32'den istek bekleniyor (PollForRequest)...")
+        # Bu noktada F446RE kartınız height=128, width=128 bilgilerini gönderecek
+        rqType, height, width, format = py_serialimg.SERIAL_IMG_PollForRequest()
+
+        # SENARYO 1: STM32 bir görüntü göndermek istiyor (MCU_WRITES)
+        if rqType == py_serialimg.MCU_WRITES:
+            print(f"STM32 görüntü gönderiyor (Boyut: {width}x{height}). Alınıyor...")
+            # Kütüphane 128x128x2 byte veriyi okuyacak
+            img = py_serialimg.SERIAL_IMG_Read()
+            print("Görüntü başarıyla alındı.")
+            
+            # GÜNCELLEME 3 (İsteğe bağlı): Kayıt dosyasının adını netleştirdik
+            received_filename = "received_from_f446re.png"
+            cv2.imwrite(received_filename, img)
+            print(f"Görüntü '{received_filename}' olarak kaydedildi.")
+
+        # SENARYO 2: STM32 bir görüntü almak istiyor (MCU_READS)
+        elif rqType == py_serialimg.MCU_READS:
+            print(f"STM32 görüntü istiyor (Boyut: {width}x{height}). Gönderiliyor...")
+            # 'SERIAL_IMG_Write' fonksiyonu 'mandrill.tif' dosyasını
+            # otomatik olarak {width}x{height} (128x128) boyutuna küçültecek.
+            img = py_serialimg.SERIAL_IMG_Write(mandrill)
+            print(f"'{mandrill}' görüntüsü (128x128'e küçültülerek) başarıyla gönderildi.")
+
+except KeyboardInterrupt:
+    print("\nProgram durduruldu.")
+except Exception as e:
+    print(f"\nBir hata oluştu: {e}")
+    print(f"COM portunun ('{COM_PORT}') doğru olduğundan ve STM32 kartının bağlı olduğundan emin olun.")
