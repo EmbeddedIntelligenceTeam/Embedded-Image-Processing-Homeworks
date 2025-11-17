@@ -39,6 +39,64 @@ Importing an image from the computer, computing its histogram, and displaying th
 /* USER CODE END Includes */
 ```
 
+```c
+/* USER CODE BEGIN PV */
+uint32_t g_histogram_data[256];
+/* USER CODE END PV */
+```
+
+```c
+/* USER CODE BEGIN PFP */
+void Homework_Calculate_Histogram(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height);
+/* USER CODE END PFP */
+```
+
+```c
+/* USER CODE BEGIN 4 */
+
+void Homework_Calculate_Histogram(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height)
+{
+  uint32_t i;
+  uint32_t total_pixels = width * height; // 128 * 128 = 16384
+
+  // 1. Önce histogram dizisinin (g_histogram_data) içini temizle (sıfırla)
+  for (i = 0; i < 256; i++)
+  {
+    p_hist[i] = 0;
+  }
+
+  // 2. Görüntünün tüm piksellerini (0'dan 16383'e kadar) tek tek dolaş
+  for (i = 0; i < total_pixels; i++)
+  {
+    // O anki pikselin değerini oku (örn: 150)
+    uint8_t pixel_value = p_gray[i]; 
+    
+    // Histogram dizisinde o değere (150'ye) karşılık gelen sayacı 1 arttır
+    p_hist[pixel_value]++;
+  }
+}
+
+/* USER CODE END 4 */
+```
+
+```c
+/* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+
+    // 1. PC'den 128x128 Grayscale görüntüyü al (pImage buffer'ı dolacak)
+	if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)  // PC -> MCU
+	{
+		Homework_Calculate_Histogram((uint8_t*)pImage, g_histogram_data, 128, 128);
+	}
+  }
+  /* USER CODE END 3 */
+```
+
 ---
 
 ### 🔹 Execution Steps  
