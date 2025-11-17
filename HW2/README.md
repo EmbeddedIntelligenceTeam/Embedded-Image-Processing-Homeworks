@@ -314,11 +314,11 @@ The goal of Histogram Equalization (HE) is to automatically improve the contrast
 
 This part is the theoretical calculation of the second question.
 
-| <img width="568" height="569" alt="image" src="https://github.com/user-attachments/assets/2ed4b521-0f78-441e-97bd-d696d3d12975" /> 
+<img width="568" height="569" alt="image" src="https://github.com/user-attachments/assets/2ed4b521-0f78-441e-97bd-d696d3d12975" /> 
 
- <img width="545" height="788" alt="image" src="https://github.com/user-attachments/assets/5cd2edbe-3c47-4353-9d53-1fa78236c234" /> 
+<img width="545" height="788" alt="image" src="https://github.com/user-attachments/assets/5cd2edbe-3c47-4353-9d53-1fa78236c234" /> 
  
- <img width="542" height="562" alt="image" src="https://github.com/user-attachments/assets/954c8253-fa35-45f6-a7e0-5b1719b4cbcb" /> |
+<img width="542" height="562" alt="image" src="https://github.com/user-attachments/assets/954c8253-fa35-45f6-a7e0-5b1719b4cbcb" /> 
 
 
 ---
