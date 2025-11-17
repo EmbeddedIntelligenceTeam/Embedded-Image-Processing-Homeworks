@@ -143,13 +143,9 @@ Here is the simple 4-step process used to test and verify the histogram calculat
 
 To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
 
-As shown in the table below, the function correctly processed the image. The STM32CubeIDE Memory Browser confirms that the `g_histogram_data` array's first element (`[0]`) holds the value **16384** (which is $128 \times 128$), and all other 255 counters remain at 0. This verifies that every pixel was counted correctly.
-
-| Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser (Q1c) |
-| :---: | :---: |
+| Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser |
 | <img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/5ec46846-03e8-44e6-8ccf-ce7760c08e89" />
 | <img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/837e55ab-f5bf-41ce-ad74-1da0ff2447bb" />
-|
 
 ---
 
