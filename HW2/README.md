@@ -260,17 +260,46 @@ void Homework_Apply_Histogram_EQ(uint8_t* p_gray, uint32_t* p_hist, uint32_t wid
   /* USER CODE END 3 */
 ```
 
----
-
-
 
 ---
 
-### 🔹 How to Run  
-1. Uncomment one transformation block at a time (2a–2d).  
-2. Build and run in **Debug Mode**.  
-3. Open the **Memory Window** and monitor pixel value changes.  
+### Execution Steps
 
+The test for Q2 (and Q3/Q4) uses the full "receive-process-transmit" architecture.
+
+1.  **Prepare STM32 (`main.c`):**
+    The `while(1)` loop is configured to run the full processing pipeline. It chains the functions from Q1 and Q2:
+    ```c
+    /* main.c - Full processing loop */
+    while (1)
+    {
+      if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
+      {
+          // 1. Calculate original histogram
+          Homework_Calculate_Histogram(pImage, g_histogram_data, ...);
+          
+          // 2. Apply HE function (function being tested)
+          Homework_Apply_Histogram_EQ(pImage, g_histogram_data, ...);
+          
+          // 3. Transmit processed image back to PC
+          LIB_SERIAL_IMG_Transmit(&img);
+      }
+    }
+    ```
+
+2.  **Start STM32:**
+    The project is compiled and run on the board (either in Debug or normal Run mode).
+
+3.  **Run Python Script (PC):**
+    * The `test_stm32.py` script is executed on the PC, this time sending a **low-contrast** (faded or dark) test image.
+    * The script sends the original image and then receives the 16,384 bytes of the processed image back from the STM32.
+
+4.  **Verify Result (PC):**
+    * The Python script displays the original and processed images side-by-side.
+    * We visually confirm that the image received from the STM32 has significantly higher contrast than the original sent.
+
+5.  **Verify Histogram (Q2c - IDE):**
+    [cite_start]To verify **Q2c**[cite: 136, 137], the `main.c` loop is temporarily modified to run `Homework_Calculate_Histogram()` a second time, *after* `Homework_Apply_Histogram_EQ()`. The debugger is then paused, and the **Memory Browser** is used to inspect `g_histogram_data`, confirming the histogram is now "spread out".
 ---
 
 ### Results 
