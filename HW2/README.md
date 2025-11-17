@@ -139,15 +139,16 @@ Here is the simple 4-step process used to test and verify the histogram calculat
 
 ---
 
-### 🔹 Results  
+### Results 
 
- **Original Grayscale Image:**  
-`python image converter/lena_gray.png`  
-![Lena Gray](python%20image%20converter/lena_gray.png)
+To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
 
- **Memory Observation:**  
-`results/my_image_data under the memory window.png`  
-![Memory Window](results/my_image_data%20under%20the%20memory%20window.png)
+As shown in the table below, the function correctly processed the image. The STM32CubeIDE Memory Browser confirms that the `g_histogram_data` array's first element (`[0]`) holds the value **16384** (which is $128 \times 128$), and all other 255 counters remain at 0. This verifies that every pixel was counted correctly.
+
+| Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser (Q1c) |
+| :---: | :---: |
+| [**INSERT IMAGE HERE** <br> *A 128x128 solid black test image.*] | [**INSERT SCREENSHOT HERE** <<img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/7d7b62cd-34b6-47db-a771-460f976816c2" />
+> *Memory Browser showing `g_histogram_data[0]` = 16384 (`0x4000`)*] |
 
 ---
 
