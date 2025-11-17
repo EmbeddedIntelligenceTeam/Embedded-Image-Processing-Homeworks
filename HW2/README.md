@@ -1,16 +1,25 @@
 #  EE4065 – Embedded Digital Image Processing
-### **Homework 1**
- **Due Date:** November 7, 2025 — 23:59  
+### **Homework 2**
+ **Due Date:** November 17, 2025   
  **Team Members:**  
 - Taner Kahyaoğlu  
 - Yusuf Zivaroğlu  
 
 ---
 
-##  Description  
-This project demonstrates the process of converting an image into a grayscale `.h` header file using Python,  
-then applying various pixel intensity transformations (Negative, Thresholding, Gamma, Piecewise Linear)  
-on STM32 via STM32CubeIDE, and observing the results through the **Memory Window**.
+## 1. Project Aim and Scope
+
+The primary objective of this project is to implement foundational digital image processing algorithms from scratch in C, running on an `STM32F446RE` microcontroller. This assignment focuses on analyzing and manipulating images at the pixel level to perform statistical analysis, contrast enhancement, and spatial filtering.
+
+The project covers four main topics:
+* **Histogram Generation:** Calculating the intensity distribution of an image.
+* **Histogram Equalization (HE):** Automatically enhancing image contrast based on its histogram.
+* **2D Convolution:** Implementing a linear spatial filter framework for:
+    * **Low-Pass Filtering** (Blurring)
+    * **High-Pass Filtering** (Edge Detection)
+* **Median Filtering:** Implementing a non-linear filter for noise reduction, specifically "salt-and-pepper" noise.
+
+All operations are performed on a **128x128 pixel, 8-bit grayscale** image.
 
 ---
 
