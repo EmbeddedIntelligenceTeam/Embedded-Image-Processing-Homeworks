@@ -613,20 +613,39 @@ This result demonstrates the key difference between a Median filter (Q4) and a L
 * The **Median** filter, by using rank-order sorting, correctly identified the noise pixels (`0` or `255`) as statistical outliers. It discarded them and replaced them with the local *median* value (the true pixel value), resulting in a clean image with perfectly preserved edges.
 ---
 
-##  Observations  
-- Pixel value distributions in **Memory Window** verified that transformations behaved correctly.  
-- The system successfully mapped grayscale data to transformed arrays in STM32 memory.  
-- All results corresponded with expected theoretical transformations.
+## 7. Observations and Key Learnings
 
+This project provided several key insights into the practical differences between image processing algorithms, especially in an embedded context.
+
+* **Point vs. Neighborhood Operations:**
+    * **Q2 (Histogram Equalization)** is an *enhanced* Point Operation. Its processing time is dominated by the initial setup (Q1's histogram + CDF/LUT creation), but the final application is $O(N)$ fast (one LUT lookup per pixel).
+    * **Q3 (Convolution)** and **Q4 (Median Filter)** are Neighborhood Operations. Their processing time is $O(N \cdot M^2)$ (where M is the kernel size, 3x3). They are significantly more computationally intensive as they require 9 memory accesses, (multiple) arithmetic operations, and one memory write *for every single pixel*.
+
+* **Linear vs. Non-Linear Filtering (The Key Takeaway):**
+    * **Q3 (Low-Pass)** is a **Linear** filter (a weighted average). As the results showed, while it does reduce general noise, it does so by **blurring the entire image**, causing sharp edges to lose definition. It is also ineffective against "salt-and-pepper" noise, as it just "smudges" the noise pixel instead of removing it.
+    * **Q4 (Median)** is a **Non-Linear** filter. The results were far superior for "salt-and-pepper" noise. By sorting the 9-pixel window, it correctly identifies the noise (`0` or `255`) as a statistical outlier and discards it. It replaces the noise with the *median* (a real value from the neighborhood), resulting in a clean image with **sharp edges preserved**.
+
+* **"In-Place" vs. "Out-of-Place" Buffers:**
+    * A critical implementation detail. Q2 (HE) could be performed **in-place** (writing results directly back to the `pImage` buffer) because the new value for `pImage[i]` only depends on the *original* value of `pImage[i]`.
+    * Q3 (Convolution) and Q4 (Median) **cannot** be performed in-place. To calculate the new value for `(x, y)`, they need the *original* values of neighbors like `(x-1, y)`. If `(x-1, y)` was already overwritten, the calculation would be corrupted. This necessitates a separate "destination" buffer (`g_processed_image`) to hold the new values, followed by a final `memcpy` to the main buffer.
 ---
 
-##  Summary  
-- **Python:** Converted an image to grayscale and exported as `.h` array.  
-- **STM32:** Applied transformations and verified results via debug memory inspection.  
-- **Outcome:** Every transformation (2a–2d) visually confirmed in memory.  
+## 8. Summary
 
+This homework was successfully completed. All four core algorithms were implemented in C, deployed on the STM32 hardware, and verified visually using a PC-based Python application.
+
+1.  **Q1 (Histogram):** A statistical analysis function was built and proven correct using the STM32CubeIDE debugger and a test image.
+2.  **Q2 (HE):** An adaptive, histogram-based contrast enhancement filter was implemented, successfully "spreading" the intensity range of a low-contrast image.
+3.  **Q3 (Convolution):** A flexible linear filtering framework was created and validated with both a **Low-Pass (blurring)** kernel and a **High-Pass (edge-detection)** kernel.
+4.  **Q4 (Median):** A non-linear, edge-preserving noise removal filter was implemented, proving highly effective at removing "salt-and-pepper" noise that the Low-Pass filter could not.
+
+The project as a whole demonstrates a complete "receive-process-transmit" pipeline, serving as a robust foundation for more advanced embedded image processing systems.
 ---
 
-##  Submission Notes  
-- This `README.md` file contains the complete project report, including all explanations, code, and result images.  
-- Repository is private and shared only with the course instructors.
+## 9. Submission Notes
+
+* **Project Location:** This `HW2/` folder contains the complete, compilable STM32CubeIDE project.
+* **Core Code:** All code written specifically for this homework (all `Homework_...` functions) can be found in `Core/Src/main.c`, primarily located inside the `USER CODE 4` block.
+* **Dependencies:** This project relies on the `lib_image.c` and `lib_serialimage.c` files (provided in HW1) for the UART communication protocol.
+* **Hardware:** All tests were performed on an `STM32F446RE-Nucleo` board.
+* **Active Function:** The `main.c` `while(1)` loop is configured to test one major function at a time (e.g., Q2, Q3, or Q4). To test a different function, the corresponding line in the `while(1)` loop must be commented/uncommented and the project re-compiled. **The code as-submitted is currently configured to run: [PLEASE WRITE THE ACTIVE FUNCTION HERE, e.g., "Question 4: Median Filter"]**.
