@@ -99,25 +99,43 @@ void Homework_Calculate_Histogram(uint8_t* p_gray, uint32_t* p_hist, uint32_t wi
 
 ---
 
-### 🔹 Execution Steps  
-1. Open **Command Prompt (CMD)**  
-2. Install Pillow library:  
-   ```bash
-   pip install Pillow
-   ```
-3. Place your image (`lena_gray.png`) in the same directory as `convert.py`  
-4. Run the script:  
-   ```bash
-   python convert.py
-   ```
-5. The file `image_data.h` will be generated automatically and placed under:  
-   ```
-   python image converter/
-   ```
-6. Move the generated `.h` file into STM32 project path:  
-   ```
-   HW1/STM32CubeIDE/Core/Inc/
-   ```
+### Execution Steps and Verification 
+
+Here is the simple 4-step process used to test and verify the histogram calculation.
+
+1.  **Prepare STM32 (`main.c`):**
+    First, the `while(1)` loop in `main.c` is modified specifically for this test. The loop must *only* receive the image and then calculate the histogram. The `LIB_SERIAL_IMG_Transmit()` function is commented out (`//`) or removed, as we do not want to send anything back to the PC for this question.
+
+    ```c
+    /* main.c - while(1) loop for Q1 Test */
+    while (1)
+    {
+      if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
+      {
+          // 1. Receive image
+          // 2. Calculate histogram (function to be tested)
+          Homework_Calculate_Histogram((uint8_t*)pImage, g_histogram_data, ...);
+          
+          // 3. DO NOT transmit back
+          // LIB_SERIAL_IMG_Transmit(&img); // <-- This line is commented out
+      }
+    }
+    ```
+
+2.  **Start Debugger (STM32):**
+    The project is compiled and flashed to the board using **Debug Mode** (the "bug" icon). We press **"Resume" (F8)** to let the code run. The STM32 is now waiting to receive an image.
+
+3.  **Run Python Script (PC):**
+    On the PC, we run the `test_stm32.py` script using a 128x128 **solid black** test image.
+    * The script sends the 16,384 bytes of the black image.
+    * After sending, the script waits for a response. Since the STM32 is not sending one, the script will **time out** after 5 seconds.
+    * **This timeout is expected and normal for the Q1 test.** It confirms the STM32 received the data and moved on.
+
+4.  **Verify Result (STM32CubeIDE):**
+    * After the Python script times out, we go back to STM32CubeIDE and click the **"Pause"** button.
+    * We open the **Memory Browser** window (Window > Show View > Memory Browser).
+    * We enter `g_histogram_data` into the address bar.
+    * As required by Q1c, we check the entries. For the solid black image, the memory correctly shows `g_histogram_data[0]` holding the value **16384** (or `0x4000`), and all other 255 entries are 0.
 
 ---
 
