@@ -149,84 +149,120 @@ To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black i
 
 ---
 
-##  Q2 — Intensity Transformations (60 pts)
+##  Q2 — Histogram Equalization
 
 ### 🔹 Objective  
-Implement and verify pixel intensity transformations in STM32CubeIDE by observing memory values.
+**Objective:**
+The goal of Histogram Equalization (HE) is to automatically improve the contrast of an image. It is an *adaptive* intensity transformation. Unlike a simple Gamma or Negative transform (from HW1), HE creates a custom transformation function (Look-Up Table or LUT) based on the image's *own* unique histogram. It "stretches" or "spreads" the most common pixel intensities across the entire available range (0-255).
 
 ---
 
-### 🔹 STM32 Project Setup  
+### 🔹 STM32 code  
 Add the generated header file into your STM32 project includes:
 
 ```c
 /* USER CODE BEGIN Includes */
-#include "image_data.h"
-#include <math.h>
+#include "lib_image.h"
+#include "lib_serialimage.h"
+#include "string.h"
 /* USER CODE END Includes */
+```
+
+```c
+/* USER CODE BEGIN PV */
+uint32_t g_histogram_data[256];
+/* USER CODE END PV */
+```
+
+```c
+/* USER CODE BEGIN PFP */
+void Homework_Calculate_Histogram(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height);
+void Homework_Apply_Histogram_EQ(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height);
+/* USER CODE END PFP */
+```
+
+```c
+/* USER CODE BEGIN 4 */
+
+void Homework_Apply_Histogram_EQ(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height)
+{
+  uint32_t i;
+  uint32_t total_pixels = width * height; // 16384
+  
+  static uint32_t cdf[256]; // static olarak tanımlamak stack taşmasını önler
+  cdf[0] = p_hist[0];
+  
+  for (i = 1; i < 256; i++)
+  {
+    cdf[i] = cdf[i-1] + p_hist[i];
+  }
+  
+  // 2. CDF'deki sıfır olmayan ilk (minimum) değeri bul
+  uint32_t cdf_min = 0;
+  for (i = 0; i < 256; i++)
+  {
+    if (cdf[i] != 0)
+    {
+      cdf_min = cdf[i];
+      break;
+    }
+  }
+
+  // 3. Normalizasyon için "Look-Up Table" (LUT) oluştur
+  //    Formül: h(v) = round( ( (CDF(v) - CDF_min) * 255 ) / (ToplamPiksel - CDF_min) )
+  
+  uint8_t lut[256];
+  
+  float scale_factor = 255.0f / (float)(total_pixels - cdf_min);
+
+  for (i = 0; i < 256; i++)
+  {
+    float h_v = (float)(cdf[i] - cdf_min) * scale_factor;
+    // En yakın tam sayıya yuvarla (0.5f eklemek yuvarlama içindir)
+    lut[i] = (uint8_t)(h_v + 0.5f); 
+  }
+
+  // 4. Görüntüyü LUT kullanarak "yerinde" yeniden haritala
+  //    (Yani pImage'ın içeriğini kalıcı olarak değiştir)
+  for (i = 0; i < total_pixels; i++)
+  {
+    p_gray[i] = lut[p_gray[i]];
+  }
+}
+/* USER CODE END 4 */
+```
+
+```c
+/* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+	  
+    // 1. PC'den 128x128 Grayscale görüntüyü al (pImage buffer'ı dolacak)
+	if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)  // PC -> MCU
+	{
+		// 2. (Soru 1) Gelen görüntünün ORİJİNAL histogramını hesapla (g_histogram_data'ya yaz)
+		Homework_Calculate_Histogram((uint8_t*)pImage, g_histogram_data, 128, 128);
+		  
+		// 3. (Soru 2b) Hesaplanan histogramı kullanarak pImage'ı yerinde eşitle 
+		Homework_Apply_Histogram_EQ((uint8_t*)pImage, g_histogram_data, 128, 128);
+		
+        //    yeni histogramını hesapla (g_histogram_data'nın üzerine yaz) 
+        Homework_Calculate_Histogram((uint8_t*)pImage, g_histogram_data, 128, 128);
+
+		// 5. İşlenmiş (eşitlenmiş) pImage görüntüsünü PC'ye geri gönder
+	    LIB_SERIAL_IMG_Transmit(&img); // MCU -> PC
+	}
+  }
+  /* USER CODE END 3 */
 ```
 
 ---
 
-### 🔹 STM32 Code (main.c)
-```c
-/* USER CODE BEGIN 2 */
-volatile unsigned char dummy_pixel = my_image_data[0];
 
-#define IMAGE_WIDTH  128
-#define IMAGE_HEIGHT 128
-#define IMAGE_SIZE   (IMAGE_WIDTH * IMAGE_HEIGHT)
-
-unsigned char output_image[IMAGE_SIZE];
-
-// 2a Negative Image Transformation
-/* for (int i = 0; i < IMAGE_SIZE; i++) {
-     output_image[i] = 255 - my_image_data[i];
- }*/
-
-// 2b Thresholding Image Transformation
-/*int threshold_value = 128;
-for (int i = 0; i < IMAGE_SIZE; i++) {
-    unsigned char r = my_image_data[i];
-    if (r > threshold_value) {
-        output_image[i] = 255; // greater than threshold → white
-    } else {
-        output_image[i] = 0;   // smaller → black
-    }
-}*/
-
-// 2c Gamma Correction Transformation
-/*float gamma_value = 1.0/3.0; // Gamma value
-for (int i = 0; i < IMAGE_SIZE; i++) {
-    float r_normalized = (float)my_image_data[i] / 255.0;
-    float s_normalized = powf(r_normalized, gamma_value);
-    output_image[i] = (unsigned char)(s_normalized * 255.0);
-}*/
-
-// 2d Piecewise Linear Transformation
-/*int r1 = 80;
-int s1 = 0;
-int r2 = 170;
-int s2 = 255;
-float slope = (float)(s2 - s1) / (float)(r2 - r1);
-
-for (int i = 0; i < IMAGE_SIZE; i++) {
-    unsigned char r = my_image_data[i];
-    if (r <= r1) {
-        output_image[i] = s1;
-    }
-    else if (r >= r2) {
-        output_image[i] = s2;
-    }
-    else {
-        output_image[i] = (unsigned char)((float)(r - r1) * slope + (float)s1);
-    }
-}*/
-
-// Prevent optimization
-volatile unsigned char dummy_output_pixel = output_image[0];
-/* USER CODE END 2 */
-```
 
 ---
 
