@@ -295,6 +295,13 @@ Here is the simple 4-step process used to test and verify the histogram calculat
 ### Results 
 
 To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
+When you look at the g_histogram_data array in the Memory Browser, you'll see the results of this "census."
+
+`g_histogram_data` is a 256-element uint32_t (4-byte integer) array.
+The value you'll see at `g_histogram_data[0]`: The total number of solid black pixels (with a value of 0) in your image.
+The value you'll see at `g_histogram_data[1]`: The total number of pixels in your image with a value of 1.
+The value you'll see at `g_histogram_data[128]`: The total number of mid-gray pixels (with a value of 128) in your image.
+The value you'll see at `g_histogram_data[255]`: The total number of solid white pixels (with a value of 255) in your image.
 
 | Original Image | Histogram formation under the browser |
 | :---: | :---: |
