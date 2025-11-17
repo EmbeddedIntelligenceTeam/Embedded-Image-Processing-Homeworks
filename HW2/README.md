@@ -273,7 +273,9 @@ As the side-by-side comparison shows, the HE function correctly and automaticall
 | :---: | :---: |
 | <img width="538" height="537" alt="image" src="https://github.com/user-attachments/assets/403aca2a-7069-48da-a7e1-55b07c3b6cf1" />|<img width="540" height="536" alt="image" src="https://github.com/user-attachments/assets/114c7e0d-38ed-46ef-8c08-25d414692147" />|
 
+
 ---
+
 
 ##  Q3 — 2D Convolution and Filtering.
 
