@@ -638,8 +638,6 @@ This homework was successfully completed. All four core algorithms were implemen
 2.  **Q2 (HE):** An adaptive, histogram-based contrast enhancement filter was implemented, successfully "spreading" the intensity range of a low-contrast image.
 3.  **Q3 (Convolution):** A flexible linear filtering framework was created and validated with both a **Low-Pass (blurring)** kernel and a **High-Pass (edge-detection)** kernel.
 4.  **Q4 (Median):** A non-linear, edge-preserving noise removal filter was implemented, proving highly effective at removing "salt-and-pepper" noise that the Low-Pass filter could not.
-
-The project as a whole demonstrates a complete "receive-process-transmit" pipeline, serving as a robust foundation for more advanced embedded image processing systems.
 ---
 
 ## 9. Submission Notes
