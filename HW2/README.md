@@ -296,9 +296,9 @@ Here is the simple 4-step process used to test and verify the histogram calculat
 
 To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
 
- <img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/5ec46846-03e8-44e6-8ccf-ce7760c08e89" />
-
- <img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/837e55ab-f5bf-41ce-ad74-1da0ff2447bb" />
+| Original Image | Histogram formation under the browser |
+| :---: | :---: |
+| <img width="538" height="537" alt="image" src="https://github.com/user-attachments/assets/403aca2a-7069-48da-a7e1-55b07c3b6cf1" /> | <img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/837e55ab-f5bf-41ce-ad74-1da0ff2447bb" /> |
 
 ---
 
@@ -307,6 +307,17 @@ To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black i
 ### 🔹 Objective  
 **Objective:**
 The goal of Histogram Equalization (HE) is to automatically improve the contrast of an image. It is an *adaptive* intensity transformation. Unlike a simple Gamma or Negative transform (from HW1), HE creates a custom transformation function (Look-Up Table or LUT) based on the image's *own* unique histogram. It "stretches" or "spreads" the most common pixel intensities across the entire available range (0-255).
+
+---
+
+### Calculation 
+
+This part is the theoretical calculation of the second question.
+
+| <img width="568" height="569" alt="image" src="https://github.com/user-attachments/assets/2ed4b521-0f78-441e-97bd-d696d3d12975" /> |
+| <img width="545" height="788" alt="image" src="https://github.com/user-attachments/assets/5cd2edbe-3c47-4353-9d53-1fa78236c234" /> |
+| <img width="542" height="562" alt="image" src="https://github.com/user-attachments/assets/954c8253-fa35-45f6-a7e0-5b1719b4cbcb" /> |
+
 
 ---
 
