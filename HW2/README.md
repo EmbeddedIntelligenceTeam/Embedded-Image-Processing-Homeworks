@@ -411,9 +411,10 @@ void Homework_Apply_Convolution(uint8_t* p_src, uint8_t* p_dst, uint32_t width, 
 	}
   }
   /* USER CODE END 3 */
+
 ```
 
-### 5.2. Results: Low-Pass Filter (Q3b)
+### Results: Low-Pass Filter 
 
 A 3x3 "Box Blur" (average) kernel was applied to the source image. This kernel smooths the image by averaging each pixel with its 8 neighbors, effectively "passing" only the low-frequency information (smooth surfaces) and attenuating high-frequency details (sharp edges, noise).
 
@@ -431,7 +432,7 @@ A 3x3 "Box Blur" (average) kernel was applied to the source image. This kernel s
 
 | Original Test Image (Sent) | Low-Pass Filtered Result (Received) |
 | :---: | :---: |
-| [**INSERT IMAGE HERE** <br> *Original 'Lena' test image.*] | [**INSERT IMAGE HERE** <br> *The resulting blurred image from the STM32.*] |
+| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="529" height="529" alt="image" src="https://github.com/user-attachments/assets/3e2994fb-4c45-44f6-bc32-a07352ffe937" /> |
 
 ---
 
@@ -453,7 +454,7 @@ A 3x3 Laplacian kernel was applied to the source image. This kernel calculates t
 
 | Original Test Image (Sent) | High-Pass Filtered Result (Received) |
 | :---: | :---: |
-| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" />| <img width="540" height="536" alt="image" src="https://github.com/user-attachments/assets/60003fa8-a33b-4dc3-aa8b-8267bc213306" />|
+| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="539" height="538" alt="image" src="https://github.com/user-attachments/assets/9a9c4375-b04f-4cde-83c9-34e9082d7189" /> |
 
 *The "filtered image entries" required by Q3b and Q3c are represented by the full processed images shown above, which were verified on the PC.*
 ---
