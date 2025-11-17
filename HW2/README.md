@@ -143,8 +143,8 @@ Here is the simple 4-step process used to test and verify the histogram calculat
 
 To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
 
-| Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser |
 | <img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/5ec46846-03e8-44e6-8ccf-ce7760c08e89" />
+
 | <img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/837e55ab-f5bf-41ce-ad74-1da0ff2447bb" />
 
 ---
