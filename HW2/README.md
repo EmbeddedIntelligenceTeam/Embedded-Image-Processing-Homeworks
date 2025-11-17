@@ -139,7 +139,7 @@ Here is the simple 4-step process used to test and verify the histogram calculat
 
 ---
 
-### 3.4. Results (Q1c)
+### Results 
 
 To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
 
@@ -147,9 +147,10 @@ As shown in the table below, the function correctly processed the image. The STM
 
 | Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser (Q1c) |
 | :---: | :---: |
-| [**<img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/73327c4e-e649-4958-b9a4-8dae367f1e11" />
-** <br> *A 128x128 solid black test image.*] | [**<img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/89fd5601-d2f2-4d9b-9beb-111ae2314410" />
-** <br> *Memory Browser showing `g_histogram_data[0]` = 16384 (`0x4000`)*] |
+| <img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/5ec46846-03e8-44e6-8ccf-ce7760c08e89" />
+| <img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/837e55ab-f5bf-41ce-ad74-1da0ff2447bb" />
+|
+
 ---
 
 ##  Q2 — Intensity Transformations (60 pts)
