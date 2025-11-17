@@ -414,7 +414,9 @@ void Homework_Apply_Convolution(uint8_t* p_src, uint8_t* p_dst, uint32_t width, 
   }
   /* USER CODE END 3 */
 
+
 ```
+
 
 ### Results: Low-Pass Filter 
 
