@@ -237,13 +237,15 @@ volatile unsigned char dummy_output_pixel = output_image[0];
 
 ---
 
-### 🔹 Results  
+### Results 
 
-####  2a — Negative Image  
-- **Description:** Inverts all pixel intensities → bright areas become dark and vice versa.  
- Result:  
-`results/output_image under the memory window for negative intensity transformation.png`  
-![Negative Transformation](results/output_image%20under%20the%20memory%20window%20for%20negative%20intensity%20transformation.png)
+To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
+
+| Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser |
+| :---: | :---: |
+| ![q1_test_black](<img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/d9728bd7-5d25-43da-aeff-9336a38da44b" />
+) | ![q1_memory_result](<img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/01069ca4-c3e0-4561-97dd-35abc2acc633" />
+) |
 
 ---
 
