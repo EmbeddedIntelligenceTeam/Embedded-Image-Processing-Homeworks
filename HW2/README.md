@@ -23,7 +23,160 @@ All operations are performed on a **128x128 pixel, 8-bit grayscale** image.
 
 ---
 
-##  Q1 — Histogram Formation (40 pts)
+## Project Architecture & PC-Side Host
+
+This project uses a "Host-Target" architecture. The `STM32` board acts as the **Target** (performing the processing), and a Python script on the PC acts as the **Host** (providing the data and visualizing the result).
+
+### Objective (PC-Side)
+
+The Python script (`test_stm32.py`) is responsible for:
+1.  Loading any standard image file (e.g., `.png`, `.jpg`) from the PC.
+2.  Resizing the image to the project's standard `128x128` resolution.
+3.  Converting the image to 8-bit grayscale and flattening it into a raw 16,384-byte array.
+4.  Handling the serial communication (using `pyserial`) to **transmit** these 16,384 bytes to the STM32.
+5.  Waiting for and **receiving** the 16,384 processed bytes back from the STM32.
+6.  Reshaping the received byte array back into a 128x128 image.
+7.  Displaying the "Original" and "Processed" images side-by-side using `opencv` for immediate visual verification and comparison.
+
+This single script is used to test **all** homework questions (Q2, Q3, and Q4). The specific filter being tested is changed by modifying the `while(1)` loop in the STM32's `main.c` file and re-compiling the microcontroller.
+---
+
+### 🔹 py_serialimg library
+```python
+import numpy as np
+import serial
+import msvcrt
+import cv2
+import time
+
+MCU_WRITES = 87
+MCU_READS  = 82
+# Request Type
+rqType = { MCU_WRITES: "MCU Sends Image", MCU_READS: "PC Sends Image"} 
+
+# Format 
+formatType = { 1: "Grayscale", 2: "RGB565", 3: "RGB888",} 
+
+IMAGE_FORMAT_GRAYSCALE	= 1
+IMAGE_FORMAT_RGB565		= 2
+IMAGE_FORMAT_RGB888		= 3
+
+# Init Com Port
+def SERIAL_Init(port):
+    global __serial    
+    __serial = serial.Serial(port, 2000000, timeout = 10)
+    __serial.flush()
+    print(__serial.name, "Opened")
+    print("")
+
+# Wait for MCU Request 
+def SERIAL_IMG_PollForRequest():
+    global requestType
+    global height
+    global width
+    global format
+    global imgSize
+    while(1):
+        if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():
+            print("Exit program!")
+            exit(0)
+        if np.frombuffer(__serial.read(1), dtype= np.uint8) == 83:
+            if np.frombuffer(__serial.read(1), dtype= np.uint8) == 84:
+                requestType  = int(np.frombuffer(__serial.read(1), dtype= np.uint8))
+                height       = int(np.frombuffer(__serial.read(2), dtype= np.uint16))
+                width        = int(np.frombuffer(__serial.read(2), dtype= np.uint16))
+                format       = int(np.frombuffer(__serial.read(1), dtype= np.uint8))
+                imgSize     = height * width * format
+                
+                print("Request Type : ", rqType[int(requestType)])
+                print("Height       : ", int(height))
+                print("Width        : ", int(width))
+                print("Format       : ", formatType[int(format)])
+                print()
+                return [int(requestType), int(height), int(width), int(format)]
+
+# Reads Image from MCU  
+def SERIAL_IMG_Read():
+    img = np.frombuffer(__serial.read(imgSize), dtype = np.uint8)
+    img = np.reshape(img, (height, width, format))
+    if format == IMAGE_FORMAT_GRAYSCALE:
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    elif format == IMAGE_FORMAT_RGB565:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR5652BGR)
+
+    timestamp = time.strftime('%Y_%m_%d_%H%M%S', time.localtime())     
+    cv2.imshow("img", img) 
+    cv2.waitKey(2000)
+    cv2.destroyAllWindows()
+    
+    #cv2.imwrite("capture/image_"+ timestamp + ".jpg", img)  
+    return img
+
+# Writes Image to MCU   
+def SERIAL_IMG_Write(path):
+    img = cv2.imread(path)
+    img = cv2.resize(img, (width,height))
+    if format == IMAGE_FORMAT_GRAYSCALE:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    elif format == IMAGE_FORMAT_RGB565:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2BGR565)
+
+    img = img.tobytes()
+    __serial.write(img)
+```
+
+### 🔹 py_image library 
+```python
+import py_serialimg
+import numpy as np
+import cv2 
+
+COM_PORT = "COM8"  # !!! BURAYI NUCLEO F446RE'YE GÖRE GÜNCELLEYİN !!!
+
+TEST_IMAGE_FILENAME = "lena_gray.png"  
+# --- AYAR SONU ---
+
+print(f"Seri port {COM_PORT} başlatılıyor...")
+py_serialimg.SERIAL_Init(COM_PORT)
+print("Port başlatıldı.")
+
+mandrill = TEST_IMAGE_FILENAME
+
+try:
+    while 1:
+        print("\nSTM32'den istek bekleniyor (PollForRequest)...")
+        # Bu noktada F446RE kartınız height=128, width=128 bilgilerini gönderecek
+        rqType, height, width, format = py_serialimg.SERIAL_IMG_PollForRequest()
+
+        # SENARYO 1: STM32 bir görüntü göndermek istiyor (MCU_WRITES)
+        if rqType == py_serialimg.MCU_WRITES:
+            print(f"STM32 görüntü gönderiyor (Boyut: {width}x{height}). Alınıyor...")
+            # Kütüphane 128x128x2 byte veriyi okuyacak
+            img = py_serialimg.SERIAL_IMG_Read()
+            print("Görüntü başarıyla alındı.")
+            
+            # GÜNCELLEME 3 (İsteğe bağlı): Kayıt dosyasının adını netleştirdik
+            received_filename = "received_from_f446re.png"
+            cv2.imwrite(received_filename, img)
+            print(f"Görüntü '{received_filename}' olarak kaydedildi.")
+
+        # SENARYO 2: STM32 bir görüntü almak istiyor (MCU_READS)
+        elif rqType == py_serialimg.MCU_READS:
+            print(f"STM32 görüntü istiyor (Boyut: {width}x{height}). Gönderiliyor...")
+            # 'SERIAL_IMG_Write' fonksiyonu 'mandrill.tif' dosyasını
+            # otomatik olarak {width}x{height} (128x128) boyutuna küçültecek.
+            img = py_serialimg.SERIAL_IMG_Write(mandrill)
+            print(f"'{mandrill}' görüntüsü (128x128'e küçültülerek) başarıyla gönderildi.")
+
+except KeyboardInterrupt:
+    print("\nProgram durduruldu.")
+except Exception as e:
+    print(f"\nBir hata oluştu: {e}")
+    print(f"COM portunun ('{COM_PORT}') doğru olduğundan ve STM32 kartının bağlı olduğundan emin olun.")
+```
+---
+
+##  Q1 — Histogram Formation 
 
 ### 🔹 Objective  
 Importing an image from the computer, computing its histogram, and displaying the histogram distribution through the Memory Browser in STM32CubeIDE
