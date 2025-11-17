@@ -414,6 +414,183 @@ void Homework_Apply_Convolution(uint8_t* p_src, uint8_t* p_dst, uint32_t width, 
   }
   /* USER CODE END 3 */
 ```
+
+---
+
+### Results: Low-Pass Filter 
+
+A 3x3 "Box Blur" (average) kernel was applied to the source image. This kernel smooths the image by averaging each pixel with its 8 neighbors, effectively "passing" only the low-frequency information (smooth surfaces) and attenuating high-frequency details (sharp edges, noise).
+
+* **Kernel Used:**
+    ```c
+    const float g_kernel_low_pass[9] = {
+      1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f,
+      1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f,
+      1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f
+    };
+    ```
+
+* **Visual Result:**
+    The resulting image received back on the PC is visibly blurred, as expected from an averaging filter.
+
+| Original Test Image (Sent) | Low-Pass Filtered Result (Received) |
+| :---: | :---: |
+| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="529" height="529" alt="image" src="https://github.com/user-attachments/assets/3e2994fb-4c45-44f6-bc32-a07352ffe937" /> |
+
+---
+
+### Results: High-Pass Filter
+
+A 3x3 Laplacian kernel was applied to the source image. This kernel calculates the difference between a pixel and its neighbors. It "passes" only the high-frequency information (edges) and attenuates low-frequency areas (flat surfaces), which become black.
+
+* **Kernel Used:**
+    ```c
+    const float g_kernel_high_pass[9] = {
+      -1.0f, -1.0f, -1.0f,
+      -1.0f,  8.0f, -1.0f,
+      -1.0f, -1.0f, -1.0f
+    };
+    ```
+
+* **Visual Result:**
+    The resulting image is an "edge map" of the original. All flat surfaces are black (0), and only the pixels corresponding to an edge are bright (white).
+
+| Original Test Image (Sent) | High-Pass Filtered Result (Received) |
+| :---: | :---: |
+| <img width="539" height="536" alt="image" src="https://github.com/user-attachments/assets/350c966d-a91a-4768-a481-2b5bea1f47fe" /> | <img width="539" height="538" alt="image" src="https://github.com/user-attachments/assets/9a9c4375-b04f-4cde-83c9-34e9082d7189" /> |
+
+*The "filtered image entries" required by Q3b and Q3c are represented by the full processed images shown above, which were verified on the PC.*
+
+---
+
+##  Q4 — 2D Median Filtering
+
+### 🔹 Objective  
+**Objective:**
+The objective of this question is to implement a **Non-Linear Spatial Filter**, which stands in contrast to the Linear filter (Convolution) from Q3. The Median Filter is a powerful non-linear filter used primarily for **noise reduction**.
+Its main advantage over a Low-Pass (averaging) filter is its effectiveness against **"salt-and-pepper" noise** (random black and white pixels). While an averaging filter *blurs* this noise, a median filter can **completely remove it** while doing a much better job of **preserving sharp edges** in the image.
+
+---
+
+### 🔹 STM32 code  
+Add the generated header file into your STM32 project includes:
+
+```c
+/* USER CODE BEGIN Includes */
+#include "lib_image.h"
+#include "lib_serialimage.h"
+#include "string.h" 
+/* USER CODE END Includes */
+```
+
+```c
+/* USER CODE BEGIN PV */
+uint32_t g_histogram_data[256];
+
+// İşlenmiş görüntü (filtre sonuçları) için buffer
+uint8_t g_processed_image[128 * 128];
+/* USER CODE END PV */
+```
+
+```c
+/* USER CODE BEGIN PFP */
+void Homework_Calculate_Histogram(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height);
+void Homework_Apply_Histogram_EQ(uint8_t* p_gray, uint32_t* p_hist, uint32_t width, uint32_t height);
+void Homework_Apply_Convolution(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height, const float* kernel);
+static void Sort_Bubble_9(uint8_t *arr);
+void Homework_Apply_Median_Filter(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height);
+/* USER CODE END PFP */
+```
+
+```c
+/* USER CODE BEGIN 4 */
+
+static void Sort_Bubble_9(uint8_t *arr)
+{
+    int i, j;
+    uint8_t temp;
+    // Basit bir bubble sort (9 eleman için yeterince hızlı)
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j < 8 - i; j++) {
+            if (arr[j] > arr[j + 1]) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void Homework_Apply_Median_Filter(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height)
+{
+  uint32_t x, y, kx, ky;
+  uint8_t window[9]; // 3x3'lük pencereyi tutacak dizi
+  uint8_t window_idx;
+
+  // Görüntünün tamamı üzerinde dolaş (y = satır, x = sütun)
+  for (y = 0; y < height; y++)
+  {
+    for (x = 0; x < width; x++)
+    {
+      // Kenardaki pikselleri (pencerenin taşacağı yerleri) atla/sıfırla
+      if (y == 0 || y == height - 1 || x == 0 || x == width - 1)
+      {
+        p_dst[y * width + x] = 0; // Kenarları siyah yap
+      }
+      else
+      {
+        window_idx = 0;
+        
+        // 1. 3x3'lük penceredeki pikselleri 'window' dizisine kopyala
+        for (ky = 0; ky < 3; ky++)
+        {
+          for (kx = 0; kx < 3; kx++)
+          {
+            window[window_idx] = p_src[(y + ky - 1) * width + (x + kx - 1)];
+            window_idx++;
+          }
+        }
+
+        // 2. 'window' dizisini sırala
+        Sort_Bubble_9(window);
+
+        // 3. Sıralanmış dizinin ortasındaki (medyan) değeri al
+        //    (9 eleman için 5. eleman, yani index 4)
+        p_dst[y * width + x] = window[4];
+      }
+    }
+  }
+}
+/* USER CODE END 4 */
+```
+
+```c
+/* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+	  
+	if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)  // PC -> MCU
+	{
+		Homework_Apply_Median_Filter(
+            (uint8_t*)pImage,       // Kaynak
+            g_processed_image,      // Hedef
+            128, 128                // Boyutlar
+        );
+		  
+		// 3. Geri göndermeden önce, işlenmiş görüntüyü ana buffer'a kopyala
+        memcpy((uint8_t*)pImage, g_processed_image, 128*128);
+
+		// 4. İşlenmiş (gürültüsü temizlenmiş) pImage görüntüsünü PC'ye geri gönder
+	    LIB_SERIAL_IMG_Transmit(&img); // MCU -> PC
+	}
+  }
+  /* USER CODE END 3 */
+```
+
 ---
 
 ### Results: Low-Pass Filter 
