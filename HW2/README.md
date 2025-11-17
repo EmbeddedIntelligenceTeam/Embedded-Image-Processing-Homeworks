@@ -258,88 +258,22 @@ void Homework_Apply_Histogram_EQ(uint8_t* p_gray, uint32_t* p_hist, uint32_t wid
 	}
   }
   /* USER CODE END 3 */
+
 ```
 
-
 ---
 
-### Execution Steps
+### Results
 
-The test for Q2 (and Q3/Q4) uses the full "receive-process-transmit" architecture.
+A low-contrast version of the "Lena" image was sent to the STM32 to test the `Homework_Apply_Histogram_EQ` function. The processed image was successfully received back by the PC.
 
-1.  **Prepare STM32 (`main.c`):**
-    The `while(1)` loop is configured to run the full processing pipeline. It chains the functions from Q1 and Q2:
-    ```c
-    /* main.c - Full processing loop */
-    while (1)
-    {
-      if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
-      {
-          // 1. Calculate original histogram
-          Homework_Calculate_Histogram(pImage, g_histogram_data, ...);
-          
-          // 2. Apply HE function (function being tested)
-          Homework_Apply_Histogram_EQ(pImage, g_histogram_data, ...);
-          
-          // 3. Transmit processed image back to PC
-          LIB_SERIAL_IMG_Transmit(&img);
-      }
-    }
-    ```
+As the side-by-side comparison shows, the HE function correctly and automatically enhanced the image contrast. Details in the shadows (like the hair) and highlights (like the hat) that were previously washed out are now clearly visible.
 
-2.  **Start STM32:**
-    The project is compiled and run on the board (either in Debug or normal Run mode).
-
-3.  **Run Python Script (PC):**
-    * The `test_stm32.py` script is executed on the PC, this time sending a **low-contrast** (faded or dark) test image.
-    * The script sends the original image and then receives the 16,384 bytes of the processed image back from the STM32.
-
-4.  **Verify Result (PC):**
-    * The Python script displays the original and processed images side-by-side.
-    * We visually confirm that the image received from the STM32 has significantly higher contrast than the original sent.
-
-5.  **Verify Histogram (Q2c - IDE):**
-    [cite_start]To verify **Q2c**[cite: 136, 137], the `main.c` loop is temporarily modified to run `Homework_Calculate_Histogram()` a second time, *after* `Homework_Apply_Histogram_EQ()`. The debugger is then paused, and the **Memory Browser** is used to inspect `g_histogram_data`, confirming the histogram is now "spread out".
----
-
-### Results 
-
-To validate the `Homework_Calculate_Histogram` function, a 128x128 solid black image was transmitted from the PC to the STM32.
-
-| Original Test Image (Sent from PC) | Result: STM32CubeIDE Memory Browser |
+| Original Low-Contrast Image (Sent) | Processed Image (Received from STM32) |
 | :---: | :---: |
-| ![q1_test_black](<img width="128" height="128" alt="lena_gray" src="https://github.com/user-attachments/assets/d9728bd7-5d25-43da-aeff-9336a38da44b" />
-) | ![q1_memory_result](<img width="1145" height="812" alt="image" src="https://github.com/user-attachments/assets/01069ca4-c3e0-4561-97dd-35abc2acc633" />
-) |
-
----
-
-####  2b — Thresholding  
-- **Description:** If pixel intensity > threshold → WHITE, else BLACK.  
- Result:  
-`results/output_image under the memory window for tresholding intensity transformation.png`  
-![Thresholding Transformation](results/output_image%20under%20the%20memory%20window%20for%20tresholding%20intensity%20transformation.png)
-
----
-
-####  2c — Gamma Correction  
-- **Description:** Adjust image brightness using γ = 3 and γ = 1/3.  
-
- Gamma = 3:  
-`results/output_image under the memory window for Gamma correction with gamma being 3 intensity transformation.png`  
-![Gamma 3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%203%20intensity%20transformation.png)
-
- Gamma = 1/3:  
-`results/output_image under the memory window for Gamma correction with gamma being 1 over 3 intensity transformation.png`  
-![Gamma 1/3](results/output_image%20under%20the%20memory%20window%20for%20Gamma%20correction%20with%20gamma%20being%201%20over%203%20intensity%20transformation.png)
-
----
-
-####  2d — Piecewise Linear  
-- **Description:** Adjust contrast by defining two linear regions (below and above threshold).  
- Result:  
-`results/output_image under the memory window for Piecewise linear intensity transformation.png`  
-![Piecewise Linear](results/output_image%20under%20the%20memory%20window%20for%20Piecewise%20linear%20intensity%20transformation.png)
+| <img width="538" height="537" alt="image" src="https://github.com/user-attachments/assets/403aca2a-7069-48da-a7e1-55b07c3b6cf1" />
+|<img width="540" height="536" alt="image" src="https://github.com/user-attachments/assets/114c7e0d-38ed-46ef-8c08-25d414692147" />
+|
 
 ---
 
