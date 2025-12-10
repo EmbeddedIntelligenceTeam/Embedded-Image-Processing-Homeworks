@@ -49,7 +49,7 @@ uint8_t  g_processed_image[IMG_PIXELS];
 uint8_t  g_tmp_image[IMG_PIXELS];
 
 // Ana görüntü buffer'ı (LIB_SERIALIMAGE bununla çalışıyor)
-volatile uint8_t pImage[IMG_PIXELS*2];
+volatile uint8_t pImage[IMG_PIXELS];
 
 
 IMAGE_HandleTypeDef img;
@@ -115,7 +115,7 @@ int main(void)
   // 128x128, 8-bit GRAYSCALE görüntü yapısını başlat
   LIB_IMAGE_InitStruct(&img, (uint8_t*)pImage,
                        IMG_HEIGHT, IMG_WIDTH,
-                       IMAGE_FORMAT_RGB565);
+                       IMAGE_FORMAT_GRAYSCALE);
 
 
 
@@ -141,7 +141,7 @@ int main(void)
      *  seçip, Python script'i bunu zaten grayscale'e çevirerek
      *  STM32'ye gönderecek. STM32 tarafındaki kod Q1 ile aynıdır.
      *******************************************************************/
-#if 0   // Q1'yi çalıştırmak için 1, Q2 ve Q3 testleri için 0 yap.
+#if 1   // Q1'yi çalıştırmak için 1, Q2 ve Q3 testleri için 0 yap.
     if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)   // PC -> MCU
     {
       // 1) Histogramı hesapla
@@ -162,7 +162,7 @@ int main(void)
     }
 #endif
 
-#if 1   // Bu senaryoyu aktifleştirmek için 1 yap, kapatmak için 0 yap
+#if 0   // Bu senaryoyu aktifleştirmek için 1 yap, kapatmak için 0 yap
     if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)   // PC -> MCU (RGB565 geliyor)
     {
         // 1) pImage içindeki RGB565 veriyi bozmadan, gri kopyasını g_tmp_image'e çıkar
