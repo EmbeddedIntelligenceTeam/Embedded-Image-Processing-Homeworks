@@ -1,0 +1,12 @@
+../Core/Src/main.c:88:5:main	40	static
+../Core/Src/main.c:282:6:SystemClock_Config	88	static
+../Core/Src/main.c:330:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:361:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:390:6:Homework_Calculate_Histogram	40	static
+../Core/Src/main.c:407:9:Homework_Compute_Otsu_Threshold	64	static
+../Core/Src/main.c:452:6:Homework_Apply_Threshold	40	static
+../Core/Src/main.c:468:6:Homework_Dilation_3x3	48	static
+../Core/Src/main.c:500:6:Homework_Erosion_3x3	48	static
+../Core/Src/main.c:532:6:Homework_Opening_3x3	24	static
+../Core/Src/main.c:541:6:Homework_Closing_3x3	24	static
+../Core/Src/main.c:555:6:Error_Handler	4	static,ignoring_inline_asm
