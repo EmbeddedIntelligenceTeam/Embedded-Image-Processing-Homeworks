@@ -133,9 +133,8 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
 # 4. Q2 — Otsu Thresholding on Color Images (RGB565)
 
 ## Objective
-Otsu's method relies on intensity distribution, which is not directly available in a color image. The objective here is to adapt the algorithm for **RGB565** format. We convert the color image to a temporary grayscale representation to calculate the threshold, and then use that threshold to create a **Mask**.
-* **Background ($Intensity \le T$):** Pixels are set to Black (`0x0000`).
-* **Foreground ($Intensity > T$):** Pixels retain their original color.
+Adapt Otsu's method for color images by converting **RGB565** data to grayscale for threshold calculation, then using that threshold to mask the background while preserving foreground color.
+
 ## Implementation Setup
 To enable color processing, the following configurations were updated in the code:
 
@@ -148,7 +147,8 @@ To enable color processing, the following configurations were updated in the cod
     LIB_IMAGE_InitStruct(&img, (uint8_t*)pImage, IMG_HEIGHT, IMG_WIDTH, IMAGE_FORMAT_RGB565);
     ```
 3.  **Active Logic:** The preprocessor directive for the Q2 block was set to `#if 1`.
-4.  **PC Configuration:** The input file in `py_image.py` was set to `"sss_image.png"`.
+4.  **PC Configuration:** The input file in `py_image.py` was set to `"lena_color.png"`.
+
 ## STM32 Implementation Details
 
 ### Bitwise Extraction & Masking
@@ -200,39 +200,86 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK) // RGB565 Received
 
 | Original Color Image | Otsu Masked Output |
 | :---: | :---: |
-| <img width="256" height="256" alt="sss_image" src="https://github.com/user-attachments/assets/d2bbd9b9-2686-4a05-944d-7baf2c4b3c70" />| <img width="256" height="256" alt="received_from_f446re" src="https://github.com/user-attachments/assets/d6bae0a7-2874-4ef8-a000-5209ef8f37e0" />|
+|<img width="256" height="256" alt="lena_color" src="https://github.com/user-attachments/assets/c01eee8c-59b9-419a-855a-ca7809552927" />| <img width="256" height="256" alt="received_from_f446re(otsu_color2)" src="https://github.com/user-attachments/assets/25d1db46-1bb0-4153-9ad9-765eb45b525a" />|
 
 ---
 
 # 5. Q3 — Morphological Operations
 
 ## Objective
-Binary images often contain noise (small white specks) or imperfections (small black holes). Morphological operations process images based on shapes using a **Structuring Element (Kernel)**. We implemented a 3x3 square kernel to perform:
+The goal is to implement fundamental morphological operations to process binary images. These operations are essential for cleaning noise, separating objects, or filling gaps.
 
-1.  **Dilation:** Sets the pixel value to the **maximum** of its neighbors. This expands white regions and fills holes ("pepper" noise).
-2.  **Erosion:** Sets the pixel value to the **minimum** of its neighbors. This shrinks white regions and eliminates small white specks ("salt" noise).
-3.  **Opening:** Erosion followed by Dilation. Removes noise from the background while maintaining the object's approximate size.
-4.  **Closing:** Dilation followed by Erosion. Fills holes inside the object while maintaining the object's approximate size.
+**Process Flow:**
+1.  **Input:** The PC sends the original **Grayscale** image (`cameraman.png`).
+2.  **Internal Binarization:** The STM32 automatically calculates the Otsu threshold (reusing the logic from Q1) and converts the image to **Binary** in memory.
+3.  **Morphology:** The selected operation (Dilation, Erosion, etc.) is applied to this binary data.
+4.  **Output:** The processed binary image is sent back to the PC.
 
 ## STM32 Implementation Details
 
-**Critical Note on Buffering:** Unlike point operations (like brightness adjustment), morphological operations depend on the values of neighboring pixels. Therefore, they cannot be performed "in-place". We must read from a source buffer and write the result to a separate destination buffer to avoid data corruption.
+**Mechanism:** Since we cannot run all filters simultaneously, we use preprocessor directives (`#if 1` / `#if 0`) in `main.c` to select which operation to compile and execute.
+
+**Buffering:** Morphological operations rely on neighboring pixels. We read from the source buffer (`pImage`) and write the result to a destination buffer (`g_processed_image`) to avoid data corruption during processing.
+
+### Main Loop Execution (Selectable Operations)
+The code block below demonstrates how the system receives the image, **first binarizes it using Otsu**, and then applies the active morphological filter.
+
+```c
+/* USER CODE BEGIN WHILE */
+while (1)
+{
+    // 1. Receive Image
+    if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
+    {
+         // 2. PRE-PROCESSING: Apply Otsu Thresholding
+         // We must convert the grayscale image to binary before morphology.
+         Homework_Calculate_Histogram((uint8_t*)pImage, g_histogram_data, IMG_WIDTH, IMG_HEIGHT);
+         uint8_t otsu_T = Homework_Compute_Otsu_Threshold(g_histogram_data, IMG_PIXELS);
+         Homework_Apply_Threshold((uint8_t*)pImage, IMG_WIDTH, IMG_HEIGHT, otsu_T);
+         
+         // At this point, 'pImage' holds the Binary Image (0 or 255).
+         
+         // 3. APPLY ACTIVE MORPHOLOGICAL FILTER
+         // Only one block should be set to #if 1 at a time.
+
+#if 1   // TEST: Dilation (Active)
+         Homework_Dilation_3x3((uint8_t*)pImage, g_processed_image, IMG_WIDTH, IMG_HEIGHT);
+         memcpy((uint8_t*)pImage, g_processed_image, IMG_PIXELS); 
+#endif
+
+#if 0   // TEST: Erosion (Inactive)
+         Homework_Erosion_3x3((uint8_t*)pImage, g_processed_image, IMG_WIDTH, IMG_HEIGHT);
+         memcpy((uint8_t*)pImage, g_processed_image, IMG_PIXELS);
+#endif
+
+#if 0   // TEST: Opening (Inactive)
+         Homework_Opening_3x3((uint8_t*)pImage, g_processed_image, IMG_WIDTH, IMG_HEIGHT, g_tmp_image);
+         memcpy((uint8_t*)pImage, g_processed_image, IMG_PIXELS);
+#endif
+
+#if 0   // TEST: Closing (Inactive)
+         Homework_Closing_3x3((uint8_t*)pImage, g_processed_image, IMG_WIDTH, IMG_HEIGHT, g_tmp_image);
+         memcpy((uint8_t*)pImage, g_processed_image, IMG_PIXELS);
+#endif
+
+         // 4. Send Final Result
+         LIB_SERIAL_IMG_Transmit(&img);
+    }
+}
+```
 
 ### Morphological Functions
 
-```c
-/* USER CODE BEGIN 4 */
+#### 1. Dilation
+**Logic:** Sets pixel to 255 if **any** neighbor is 255 (Max Filter).
+**Effect:** Expands white regions, fills black holes.
 
-// Dilation: Max Filter
+```c
 void Homework_Dilation_3x3(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height)
 {
   for (uint32_t y = 0; y < height; y++) {
     for (uint32_t x = 0; x < width; x++) {
-       
-       // Boundary checks omitted for brevity (handled in full code)
-       
        uint8_t max_val = 0;
-       // Iterate 3x3 Kernel
        for (int ky = -1; ky <= 1; ky++) {
           for (int kx = -1; kx <= 1; kx++) {
              uint8_t v = p_src[(y + ky) * width + (x + kx)];
@@ -243,29 +290,61 @@ void Homework_Dilation_3x3(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint3
     }
   }
 }
+```
 
-// Opening: Erosion -> Dilation
+#### 2. Erosion
+**Logic:** Sets pixel to 255 only if **all** neighbors are 255 (Min Filter).
+**Effect:** Shrinks white regions, removes white noise spots.
+
+```c
+void Homework_Erosion_3x3(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height)
+{
+  for (uint32_t y = 0; y < height; y++) {
+    for (uint32_t x = 0; x < width; x++) {
+       uint8_t min_val = 255; 
+       for (int ky = -1; ky <= 1; ky++) {
+          for (int kx = -1; kx <= 1; kx++) {
+             uint8_t v = p_src[(y + ky) * width + (x + kx)];
+             if (v < min_val) min_val = v;
+          }
+       }
+       p_dst[y * width + x] = min_val;
+    }
+  }
+}
+```
+
+#### 3. Opening & Closing
+* **Opening:** Erosion -> Dilation. (Removes Salt Noise).
+* **Closing:** Dilation -> Erosion. (Fills Pepper Noise).
+
+```c
 void Homework_Opening_3x3(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height, uint8_t* p_tmp)
 {
-  // Step 1: Erode source into temp buffer
   Homework_Erosion_3x3(p_src, p_tmp, width, height); 
-  // Step 2: Dilate temp buffer into destination buffer
   Homework_Dilation_3x3(p_tmp, p_dst, width, height); 
 }
-/* USER CODE END 4 */
+
+void Homework_Closing_3x3(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32_t height, uint8_t* p_tmp)
+{
+  Homework_Dilation_3x3(p_src, p_tmp, width, height); 
+  Homework_Erosion_3x3(p_tmp, p_dst, width, height); 
+}
 ```
 
 ## Results
 
-| Original Noisy Binary | Dilation | Erosion | Opening |
-|-----------------------|----------|---------|---------|
-| ![Original](noisy_original.png) | ![Dilation](dilation.png) | ![Erosion](erosion.png) | ![Opening](opening.png) |
+To clearly demonstrate the effects, the operations were applied to the **Cameraman** image (which was internally binarized by the STM32).
+
+| Baseline (Otsu Only) | Dilation | Erosion | Opening | Closing |
+| :---: | :---: | :---: | :---: | :---: |
+| <img width="170" height="170" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="170" height="170" alt="received_from_f446re(dilation)" src="https://github.com/user-attachments/assets/bd3b5e1d-5391-4846-9c4f-00a0dc269ecc" /> | <img width="170" height="170" alt="received_from_f446re(erosion)" src="https://github.com/user-attachments/assets/30d37bf6-8db3-4f89-a3db-7d7ed186bc85" /> | <img width="170" height="170" alt="received_from_f446re(opening)" src="https://github.com/user-attachments/assets/9888a595-d84b-4c4a-9d08-ac63e0575717" /> | <img width="170" height="170" alt="received_from_f446re(closing)" src="https://github.com/user-attachments/assets/b3d8279a-af53-4169-869a-db8552ebeaa2" /> |
 
 ---
 
 # 6. Observations and Key Learnings
 
-* **Algorithmic Efficiency:** Otsu's method is computationally efficient ($O(N)$) for embedded systems as it relies on a single pass to build the histogram and a loop of 256 iterations to find the threshold, making it suitable for real-time applications on the STM32F446RE.
-* **Memory Management:** Morphological operations require $O(N)$ auxiliary memory. On a microcontroller with limited RAM, managing these buffers (e.g., `g_tmp_image`) is critical. We reused the same buffer for different stages of the "Opening" operation to optimize usage.
-* **Effect of Kernel Size:** While we used a 3x3 kernel, larger kernels (e.g., 5x5) would remove larger noise particles but would also cause more aggressive distortion (shrinking/expanding) of the main object features.
-* **RGB565 Complexity:** Processing color images requires explicit handling of bit-fields. Masking demonstrates how we can use the result of a grayscale analysis (the threshold) to manipulate the original color data selectively.
+* **Adaptive Thresholding (Otsu):** Unlike manual thresholding which fails under varying lighting conditions, Otsu's method demonstrated robustness by automatically maximizing the inter-class variance. This proves highly effective for automating segmentation tasks in embedded vision applications.
+* **Non-Linear vs. Linear Processing:** In HW2, linear filters (Convolution) preserved the overall energy of the image. In contrast, Morphological operations (Q3) are non-linear and destructive; they intentionally add or remove pixels based on geometric shapes. This distinction is critical: filtering is for *enhancing* images, while morphology is for *analyzing and cleaning* shapes.
+* **Memory Constraints & Buffering:** A critical embedded system lesson was the necessity of **Double Buffering**. Since morphological operations require the original values of neighboring pixels to compute the current pixel, in-place modification would propagate errors. We utilized `g_processed_image` (and `g_tmp_image` for compound operations) to handle this, highlighting the trade-off between algorithm complexity and RAM usage ($O(N)$ auxiliary space).
+* **Color Space Manipulation:** Masking in Q2 reinforced the concept that processing color images often involves dimensionality reduction (RGB -> Grayscale) for analysis (thresholding), followed by re-application to the original high-dimensional data (Masking), a common pattern in computer vision pipelines.
