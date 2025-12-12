@@ -133,7 +133,7 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
 # 4. Q2 — Otsu Thresholding on Color Images (RGB565)
 
 ## Objective
-Adapt Otsu's method for color images by converting **RGB565** data to grayscale for threshold calculation, then using that threshold to mask the background while preserving foreground color.
+The goal is to extend Otsu's method to color images using a **Multi-Channel Approach**. Instead of converting the image to grayscale and finding a single threshold, we analyze the **Red, Green, and Blue** channels independently. We calculate three separate thresholds ($T_R, T_G, T_B$) and binarize each channel individually before recombining them. This results in a segmented image composed of primary and secondary colors (8-color palette).
 
 ## Implementation Setup
 To enable color processing, the following configurations were updated in the code:
@@ -151,43 +151,63 @@ To enable color processing, the following configurations were updated in the cod
 
 ## STM32 Implementation Details
 
-### Bitwise Extraction & Masking
-Since RGB565 packs pixel data into 16 bits (5 bits Red, 6 bits Green, 5 bits Blue), we use bit-shifting to extract components and calculate luminance.
+### Multi-Channel Histogram & Segmentation Logic
+The code performs the following steps:
+1.  **Extraction:** Iterates through the RGB565 buffer and extracts 8-bit R, G, and B components.
+2.  **Histogram Analysis:** Builds three separate histograms (`histR`, `histG`, `histB`).
+3.  **Thresholding:** Computes optimal Otsu thresholds for each channel independently.
+4.  **Reconstruction:** Rebuilds the pixel by setting each channel to its maximum value if it exceeds the threshold, or 0 otherwise.
 
 ```c
-#if 1 // Q2 Active
+#if 1 // Q2 Active: Multi-Channel Otsu
 if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK) // RGB565 Received
 {
     uint16_t* p_src_rgb = (uint16_t*)pImage;
 
-    // 1. Dimensionality Reduction: RGB565 -> Grayscale
-    // We use a temporary buffer (g_tmp_image) to hold the intensity values.
+    // 3 Separate Histograms (Static to prevent stack overflow)
+    static uint32_t histR[256];
+    static uint32_t histG[256];
+    static uint32_t histB[256];
+
+    // 1. Clear Histograms
+    memset(histR, 0, 256 * sizeof(uint32_t));
+    memset(histG, 0, 256 * sizeof(uint32_t));
+    memset(histB, 0, 256 * sizeof(uint32_t));
+
+    // 2. Build Histograms
+    for (uint32_t i = 0; i < IMG_PIXELS; i++)
+    {
+        uint16_t pixel = p_src_rgb[i];
+        // Extract 8-bit values
+        uint8_t r = ((pixel >> 11) & 0x1F) << 3;
+        uint8_t g = ((pixel >> 5)  & 0x3F) << 2;
+        uint8_t b = ((pixel)       & 0x1F) << 3;
+
+        histR[r]++; histG[g]++; histB[b]++;
+    }
+
+    // 3. Compute 3 Separate Thresholds
+    uint8_t T_red   = Homework_Compute_Otsu_Threshold(histR, IMG_PIXELS);
+    uint8_t T_green = Homework_Compute_Otsu_Threshold(histG, IMG_PIXELS);
+    uint8_t T_blue  = Homework_Compute_Otsu_Threshold(histB, IMG_PIXELS);
+
+    // 4. Binarize Each Channel & Reconstruct
     for (uint32_t i = 0; i < IMG_PIXELS; i++)
     {
         uint16_t pixel = p_src_rgb[i];
         
-        // Extract components using bitmasks and shifts
-        uint8_t r = ((pixel >> 11) & 0x1F) << 3; // Expand to 8-bit range
+        uint8_t r = ((pixel >> 11) & 0x1F) << 3;
         uint8_t g = ((pixel >> 5)  & 0x3F) << 2;
         uint8_t b = ((pixel)       & 0x1F) << 3;
-        
-        // Simple Average Method for Grayscale
-        g_tmp_image[i] = (r + g + b) / 3;
-    }
 
-    // 2. Calculate Histogram & Threshold on the Grayscale Map
-    Homework_Calculate_Histogram(g_tmp_image, g_histogram_data, IMG_WIDTH, IMG_HEIGHT);
-    uint8_t otsu_T = Homework_Compute_Otsu_Threshold(g_histogram_data, IMG_PIXELS);
+        // If channel > Threshold -> Set to MAX, else 0
+        // RGB565 Max Values: R=31 (0x1F), G=63 (0x3F), B=31 (0x1F)
+        uint16_t new_r = (r > T_red)   ? 0x1F : 0;
+        uint16_t new_g = (g > T_green) ? 0x3F : 0;
+        uint16_t new_b = (b > T_blue)  ? 0x1F : 0;
 
-    // 3. Apply Mask to the Original RGB Image
-    for (uint32_t i = 0; i < IMG_PIXELS; i++)
-    {
-        // Check intensity against threshold
-        if (g_tmp_image[i] <= otsu_T)
-        {
-            p_src_rgb[i] = 0x0000; // Mask Background (Black)
-        }
-        // Else: Leave p_src_rgb[i] untouched (Foreground Color Preserved)
+        // Pack back into RGB565
+        p_src_rgb[i] = (new_r << 11) | (new_g << 5) | (new_b);
     }
 
     img.format = IMAGE_FORMAT_RGB565;
@@ -195,12 +215,11 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK) // RGB565 Received
 }
 #endif
 ```
-
 ## Results
 
 | Original Color Image | Otsu Masked Output |
 | :---: | :---: |
-|<img width="256" height="256" alt="lena_color" src="https://github.com/user-attachments/assets/c01eee8c-59b9-419a-855a-ca7809552927" />| <img width="256" height="256" alt="received_from_f446re(otsu_color2)" src="https://github.com/user-attachments/assets/25d1db46-1bb0-4153-9ad9-765eb45b525a" />|
+|<img width="256" height="256" alt="lena_color" src="https://github.com/user-attachments/assets/c01eee8c-59b9-419a-855a-ca7809552927" />| <img width="256" height="256" alt="received_from_f446re(otsu_color3)" src="https://github.com/user-attachments/assets/d2e67bd2-0c5d-4371-8d2f-a9b41e039aff" />|
 
 ---
 
