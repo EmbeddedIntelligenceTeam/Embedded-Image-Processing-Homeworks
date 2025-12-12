@@ -217,7 +217,7 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK) // RGB565 Received
 ```
 ## Results
 
-| Original Color Image | Otsu Masked Output |
+| Original Color Image | Multi-Channel Otsu Output |
 | :---: | :---: |
 |<img width="256" height="256" alt="lena_color" src="https://github.com/user-attachments/assets/c01eee8c-59b9-419a-855a-ca7809552927" />| <img width="256" height="256" alt="received_from_f446re(otsu_color3)" src="https://github.com/user-attachments/assets/d2e67bd2-0c5d-4371-8d2f-a9b41e039aff" />|
 
@@ -355,11 +355,21 @@ void Homework_Closing_3x3(uint8_t* p_src, uint8_t* p_dst, uint32_t width, uint32
 
 To clearly demonstrate the effects, the operations were applied to the **Cameraman** image (which was internally binarized by the STM32).
 
-| Baseline (Otsu Only) | Dilation | Erosion | Opening | Closing |
-| :---: | :---: | :---: | :---: | :---: |
-| <img width="170" height="170" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="170" height="170" alt="received_from_f446re(dilation)" src="https://github.com/user-attachments/assets/bd3b5e1d-5391-4846-9c4f-00a0dc269ecc" /> | <img width="170" height="170" alt="received_from_f446re(erosion)" src="https://github.com/user-attachments/assets/30d37bf6-8db3-4f89-a3db-7d7ed186bc85" /> | <img width="170" height="170" alt="received_from_f446re(opening)" src="https://github.com/user-attachments/assets/9888a595-d84b-4c4a-9d08-ac63e0575717" /> | <img width="170" height="170" alt="received_from_f446re(closing)" src="https://github.com/user-attachments/assets/b3d8279a-af53-4169-869a-db8552ebeaa2" /> |
+| Baseline (Otsu Only) | Dilation | 
+| :---: | :---: | 
+| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(dilation)" src="https://github.com/user-attachments/assets/bd3b5e1d-5391-4846-9c4f-00a0dc269ecc" /> |
 
----
+| Baseline (Otsu Only) | Erosion |
+| :---: | :---: |
+| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(dilation)" src="https://github.com/user-attachments/assets/bd3b5e1d-5391-4846-9c4f-00a0dc269ecc" /> |
+
+| Baseline (Otsu Only) | Opening |
+| :---: | :---: |
+| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(opening)" src="https://github.com/user-attachments/assets/9888a595-d84b-4c4a-9d08-ac63e0575717" /> |
+
+| Baseline (Otsu Only) | Closing |
+| :---: | :---: |
+| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(closing)" src="https://github.com/user-attachments/assets/b3d8279a-af53-4169-869a-db8552ebeaa2" />  |
 
 # 6. Observations and Key Learnings
 
