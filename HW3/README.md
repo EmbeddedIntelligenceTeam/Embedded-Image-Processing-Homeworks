@@ -1,7 +1,7 @@
 # EE4065 – Embedded Digital Image Processing
 ### **Homework 3**
 **Due Date:** December 19, 2025  
-**Team Members:** 
+**Team Members:**
 - **Taner KAHYAOĞLU**
 - **Yusuf ZİVAROĞLU**
 
@@ -133,21 +133,27 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK)
 # 4. Q2 — Otsu Thresholding on Color Images (RGB565)
 
 ## Objective
-The goal is to extend Otsu's method to color images using a **Multi-Channel Approach**. Instead of converting the image to grayscale and finding a single threshold, we analyze the **Red, Green, and Blue** channels independently. We calculate three separate thresholds ($T_R, T_G, T_B$) and binarize each channel individually before recombining them. This results in a segmented image composed of primary and secondary colors (8-color palette).
+The goal is to extend Otsu's method to color images using a **Multi-Channel Approach**. Instead of converting the image to grayscale and finding a single threshold, we analyze the **Red, Green, and Blue** channels independently. We calculate three separate thresholds ($T_R, T_G, T_B$) and binarize each channel individually before recombining them.
 
 ## Implementation Setup
-To enable color processing, the following configurations were updated in the code:
+To enable color processing, the logic in `main.c` adapts dynamically based on the active question block:
 
-1.  **Buffer Expansion:** Since RGB565 uses 2 bytes per pixel, the buffer size was doubled in `main.c`:
+1.  **Global Buffer Size:** The global image buffer was defined to accommodate the larger size of RGB565 images (2 bytes per pixel).
     ```c
-    volatile uint8_t pImage[IMG_PIXELS * 2]; // 128*128*2 bytes
+    volatile uint8_t pImage[IMG_PIXELS * 2]; // 128*128*2 bytes to support both modes
     ```
-2.  **Initialization:** The image structure was re-initialized for color format:
+
+2.  **Context-Specific Initialization:** Inside the Q2 active block (`#if 1`), the image structure is explicitly initialized for the **RGB565** format, whereas for Q1 and Q3, it defaults to Grayscale.
     ```c
+    // Inside the Q2 logic block:
+    img.format = IMAGE_FORMAT_RGB565;
     LIB_IMAGE_InitStruct(&img, (uint8_t*)pImage, IMG_HEIGHT, IMG_WIDTH, IMAGE_FORMAT_RGB565);
     ```
-3.  **Active Logic:** The preprocessor directive for the Q2 block was set to `#if 1`.
-4.  **PC Configuration:** The input file in `py_image.py` was set to `"lena_color.png"`.
+
+3.  **PC Configuration:** The input file in the Python script (`py_image.py`) is set to the color test image:
+    ```python
+    TEST_IMAGE_FILENAME = "lena_color.png"
+    ```
 
 ## STM32 Implementation Details
 
@@ -215,6 +221,7 @@ if (LIB_SERIAL_IMG_Receive(&img) == SERIAL_OK) // RGB565 Received
 }
 #endif
 ```
+
 ## Results
 
 | Original Color Image | Multi-Channel Otsu Output |
@@ -361,7 +368,7 @@ To clearly demonstrate the effects, the operations were applied to the **Cameram
 
 | Baseline (Otsu Only) | Erosion |
 | :---: | :---: |
-| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(dilation)" src="https://github.com/user-attachments/assets/bd3b5e1d-5391-4846-9c4f-00a0dc269ecc" /> |
+| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(erosion)" src="https://github.com/user-attachments/assets/30d37bf6-8db3-4f89-a3db-7d7ed186bc85" /> |
 
 | Baseline (Otsu Only) | Opening |
 | :---: | :---: |
@@ -369,7 +376,9 @@ To clearly demonstrate the effects, the operations were applied to the **Cameram
 
 | Baseline (Otsu Only) | Closing |
 | :---: | :---: |
-| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(closing)" src="https://github.com/user-attachments/assets/b3d8279a-af53-4169-869a-db8552ebeaa2" />  |
+| <img width="256" height="256" alt="received_from_f446re(otsu_gray)" src="https://github.com/user-attachments/assets/ccd7f26b-72b6-46e6-ac12-0142c4a85404" /> | <img width="256" height="256" alt="received_from_f446re(closing)" src="https://github.com/user-attachments/assets/b3d8279a-af53-4169-869a-db8552ebeaa2" /> |
+
+---
 
 # 6. Observations and Key Learnings
 
