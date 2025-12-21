@@ -124,12 +124,11 @@ model.save("hdr_perceptron.h5")
 ### Classification Performance
 The Single Neuron classifier was evaluated on the MNIST test set (10,000 images). Despite the extreme simplicity of the model (only 7 input features and 1 neuron), the system achieved high accuracy in distinguishing the digit '0' from the other nine digits.
 
-If you enabled saving, the confusion matrix image is written to:
+You can display it in the README like this:
 
-- `results/confusion_matrix.png`
-
-**Confusion Matrix:**
-The confusion matrix below visualizes the model's performance on the test data. It compares the *True Labels* (Y-axis) against the *Predicted Labels* (X-axis).
+```md
+![Confusion Matrix](results/confusion_matrix.png)
+```
 
 * **True Negatives (Top-Left):** Non-zero digits correctly identified as "Not 0".
 * **False Positives (Top-Right):** Non-zero digits incorrectly flagged as "0".
@@ -257,10 +256,6 @@ plt.show()
 ### Performance Overview
 Transitioning from a **Single Neuron** model to a **Multi-Layer Perceptron (MLP)** significantly expands the system’s capability from detecting only one class (e.g., digit **0**) to recognizing **all 10 digits (0–9)**.  
 After training, the model is evaluated on the MNIST test set using the extracted **7 Hu Moments** as input features, and performance is visualized via a **confusion matrix**.
-
-If you enabled saving, the confusion matrix image is written to:
-
-- `results/confusion_matrix.png`
 
 You can display it in the README like this:
 
