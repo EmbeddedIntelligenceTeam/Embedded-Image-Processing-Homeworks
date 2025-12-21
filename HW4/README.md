@@ -255,10 +255,7 @@ After training, the model is evaluated on the MNIST test set using the extracted
 
 You can display it in the README like this:
 
-```md
-![Confusion Matrix](results/confusion_matrix.png)
-```
-
+![Confusion Matrix](HW4_Q2/Figure_2.png)
 
 ### Key Observations
 
