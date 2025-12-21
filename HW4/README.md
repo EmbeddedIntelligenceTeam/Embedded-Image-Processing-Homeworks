@@ -5,6 +5,7 @@
 - **Taner KAHYAOĞLU**
 - **Yusuf ZİVAROĞLU**
 
+**High İmportant** you should use python version 3.8 for this homework codes
 ---
 
 # 7. Application 1 — Single Neuron Classifier with Hu Moments
