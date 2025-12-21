@@ -7,8 +7,6 @@
 
 ---
 
----
-
 # 7. Application 1 — Single Neuron Classifier with Hu Moments
 
 ## 7.1 Objective
@@ -126,9 +124,7 @@ The Single Neuron classifier was evaluated on the MNIST test set (10,000 images)
 
 You can display it in the README like this:
 
-```md
-![Confusion Matrix](results/confusion_matrix.png)
-```
+| https://github.com/EmbeddedIntelligenceTeam/Embedded-Image-Processing-Homeworks/blob/main/HW4/HW4_Q1/Figure_1.png |
 
 * **True Negatives (Top-Left):** Non-zero digits correctly identified as "Not 0".
 * **False Positives (Top-Right):** Non-zero digits incorrectly flagged as "0".
