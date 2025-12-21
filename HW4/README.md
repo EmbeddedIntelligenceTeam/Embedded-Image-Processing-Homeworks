@@ -153,3 +153,122 @@ The distinct diagonal structure indicates that the **Hu Moments** successfully c
 3.  **Linear Separability of Topology:**
     * A Single Neuron (Perceptron) is a **Linear Classifier**; it separates classes using a straight line (or hyperplane).
     * The success of this experiment proves that in the 7-dimensional "Hu Moment Space", the digit '0' is **linearly separable** from other digits. This is largely due to Hu Moments capturing the topological property of having a "hole," which distinguishes '0' from digits like 1, 2, 3, 5, or 7.
+
+---
+
+# Application 2 — Multi-Layer Perceptron (MLP) Classifier (MNIST + Hu Moments)
+
+## 8.1 Objective
+Following the Single Neuron experiment, the next logical step is to extend the classification capabilities to recognize all 10 digits (0–9) of the MNIST dataset.
+
+While the Single Neuron (Application 1) successfully identified the digit **'0'** due to its unique topological hole, it lacks the complexity to distinguish between other digits (e.g., distinguishing **'3'** from **'8'** or **'1'** from **'7'**). These classes are **not linearly separable** in the 7-dimensional **Hu Moment** feature space.  
+Therefore, we implement a **Multi-Layer Perceptron (MLP)** with hidden layers to learn **non-linear decision boundaries**.
+
+---
+
+## 8.2 Model Architecture
+We utilize a deep neural network structure with **two hidden layers**, allowing the model to learn more abstract representations of the input features.
+
+- **Input Layer:** 7 Nodes (corresponding to the 7 Hu Moments)
+- **Hidden Layer 1:** 100 Neurons, **ReLU**
+- **Hidden Layer 2:** 100 Neurons, **ReLU**
+- **Output Layer:** 10 Neurons, **Softmax** (one for each digit 0–9)
+
+### Why ReLU?
+ReLU introduces non-linearity, enabling the network to approximate complex functions that a single linear layer cannot.
+
+### Why Softmax?
+For multi-class classification, Softmax converts the raw output logits into a **probability distribution** across the 10 classes.
+
+---
+
+## 8.3 Implementation Details
+
+### Training Configuration
+- **Loss Function:** `SparseCategoricalCrossentropy`  
+  (Suitable for multi-class classification where labels are integer class IDs)
+- **Optimizer:** `Adam` with learning rate `1e-4`
+- **Epochs:** up to `500` (controlled by callbacks)
+
+### Callbacks for Robust Training
+To save the best model and avoid unnecessary training:
+- **EarlyStopping:** stops training if loss does not improve for **5 epochs**
+- **ModelCheckpoint:** saves the model only when it improves (`hdr_mlp.h5`)
+
+---
+
+## 8.4 Python Implementation Code
+
+> **Dependencies:** `numpy`, `opencv-python`, `scikit-learn`, `matplotlib`, `tensorflow/keras`
+
+```python
+import os
+import numpy as np
+import cv2
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import keras
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+from matplotlib import pyplot as plt
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # main.py's directory
+KERAS_MODEL_DIR = os.path.join(BASE_DIR, "models")     # Directory to save models
+os.makedirs(KERAS_MODEL_DIR, exist_ok=True)
+
+model_save_path = os.path.join(KERAS_MODEL_DIR, "hdr_mlp.h5")
+
+# 1. Load Data
+(train_images, train_labels), (test_images, test_labels) = keras.datasets.mnist.load_data()
+
+# 2. Feature Extraction (Hu Moments)
+train_huMoments = np.empty((len(train_images), 7))
+test_huMoments = np.empty((len(test_images), 7))
+
+print("Extracting features from training data...")
+for train_idx, train_img in enumerate(train_images):
+    train_moments = cv2.moments(train_img, True)
+    train_huMoments[train_idx] = cv2.HuMoments(train_moments).reshape(7)
+
+print("Extracting features from test data...")
+for test_idx, test_img in enumerate(test_images):
+    test_moments = cv2.moments(test_img, True)
+    test_huMoments[test_idx] = cv2.HuMoments(test_moments).reshape(7)
+
+# 3. Define MLP Architecture (7 -> 100 -> 100 -> 10)
+model = keras.models.Sequential([
+    keras.layers.Dense(100, input_shape=[7], activation="relu"),
+    keras.layers.Dense(100, activation="relu"),
+    keras.layers.Dense(10, activation="softmax")
+])
+
+# 4. Compile & Train
+categories = np.unique(test_labels)
+model.compile(
+    loss=keras.losses.SparseCategoricalCrossentropy(),
+    optimizer=keras.optimizers.Adam(1e-4),
+    metrics=["accuracy"]
+)
+
+mc_callback = ModelCheckpoint(model_save_path, save_best_only=True)
+es_callback = EarlyStopping(monitor="loss", patience=5)
+
+print("Starting Training...")
+model.fit(
+    train_huMoments,
+    train_labels,
+    epochs=500,
+    verbose=1,
+    callbacks=[mc_callback, es_callback]
+)
+
+# 5. Evaluation
+model = keras.models.load_model(model_save_path)
+nn_preds = model.predict(test_huMoments)
+predicted_classes = np.argmax(nn_preds, axis=1)
+
+# 6. Visualization
+conf_matrix = confusion_matrix(test_labels, predicted_classes)
+cm_display = ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=categories)
+cm_display.plot()
+cm_display.ax_.set_title("Neural Network Confusion Matrix")
+plt.show()
+      
