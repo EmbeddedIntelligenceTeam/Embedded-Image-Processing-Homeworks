@@ -127,7 +127,7 @@ The Single Neuron classifier was evaluated on the MNIST test set (10,000 images)
 **Confusion Matrix:**
 The confusion matrix below visualizes the model's performance on the test data. It compares the *True Labels* (Y-axis) against the *Predicted Labels* (X-axis).
 
-![Confusion Matrix]([https://github.com/user-attachments/assets/image_a2aa49.png](https://github.com/EmbeddedIntelligenceTeam/Embedded-Image-Processing-Homeworks/blob/main/HW4/HW4_Q1/models/hdr_perceptron.h5))
+[Confusion Matrix]([https://github.com/user-attachments/assets/image_a2aa49.png](https://github.com/EmbeddedIntelligenceTeam/Embedded-Image-Processing-Homeworks/blob/main/HW4/HW4_Q1/models/hdr_perceptron.h5))
 
 * **True Negatives (Top-Left):** Non-zero digits correctly identified as "Not 0".
 * **False Positives (Top-Right):** Non-zero digits incorrectly flagged as "0".
