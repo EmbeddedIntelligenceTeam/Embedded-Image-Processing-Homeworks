@@ -116,3 +116,40 @@ plt.show()
 
 # Save model for potential MCU deployment
 model.save("hdr_perceptron.h5")
+```
+---
+
+## 7.5 Results & Analysis
+
+### Classification Performance
+The Single Neuron classifier was evaluated on the MNIST test set (10,000 images). Despite the extreme simplicity of the model (only 7 input features and 1 neuron), the system achieved high accuracy in distinguishing the digit '0' from the other nine digits.
+
+**Confusion Matrix:**
+The confusion matrix below visualizes the model's performance on the test data. It compares the *True Labels* (Y-axis) against the *Predicted Labels* (X-axis).
+
+![Confusion Matrix](https://github.com/user-attachments/assets/image_a2aa49.png)
+
+* **True Negatives (Top-Left):** Non-zero digits correctly identified as "Not 0".
+* **False Positives (Top-Right):** Non-zero digits incorrectly flagged as "0".
+* **False Negatives (Bottom-Left):** Zero digits missed (predicted as "Not 0").
+* **True Positives (Bottom-Right):** Zero digits correctly identified as "0".
+
+The distinct diagonal structure indicates that the **Hu Moments** successfully captured the unique topological signature of the digit '0' (the closed loop), allowing the linear classifier to establish a valid decision boundary.
+
+---
+
+### Key Observations
+
+1.  **Effectiveness of Feature Engineering (Dimensionality Reduction):**
+    * **Raw Input:** 784 pixels (28x28).
+    * **Extracted Features:** 7 Hu Moments.
+    * **Impact:** We reduced the input dimensionality by over **99%**. This is crucial for embedded deployment on the STM32, as it drastically minimizes RAM usage and CPU cycles required for inference. This demonstrates that smart feature extraction can often replace complex deep learning models for specific tasks.
+
+2.  **Handling Class Imbalance:**
+    * The dataset is inherently imbalanced: it contains approximately **9x more** "Non-Zero" digits (1-9) than "Zero" digits (0).
+    * Without intervention, a naive model might achieve ~90% accuracy simply by predicting "Not 0" for every input.
+    * **Solution:** By implementing **class weights** (`{0:8, 1:1}`), we forced the optimizer to treat the minority class (0) as 8 times more important. This resulted in a balanced detection rate (high recall for 0s) rather than a bias towards the majority class.
+
+3.  **Linear Separability of Topology:**
+    * A Single Neuron (Perceptron) is a **Linear Classifier**; it separates classes using a straight line (or hyperplane).
+    * The success of this experiment proves that in the 7-dimensional "Hu Moment Space", the digit '0' is **linearly separable** from other digits. This is largely due to Hu Moments capturing the topological property of having a "hole," which distinguishes '0' from digits like 1, 2, 3, 5, or 7.
