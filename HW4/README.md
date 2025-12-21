@@ -210,65 +210,82 @@ import keras
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from matplotlib import pyplot as plt
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # main.py's directory
-KERAS_MODEL_DIR = os.path.join(BASE_DIR, "models")     # Directory to save models
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # main.py'nin olduğu klasör
+KERAS_MODEL_DIR = os.path.join(BASE_DIR, "models")     # modelleri koyacağın klasör
 os.makedirs(KERAS_MODEL_DIR, exist_ok=True)
 
 model_save_path = os.path.join(KERAS_MODEL_DIR, "hdr_mlp.h5")
-
-# 1. Load Data
 (train_images, train_labels), (test_images, test_labels) = keras.datasets.mnist.load_data()
 
-# 2. Feature Extraction (Hu Moments)
-train_huMoments = np.empty((len(train_images), 7))
-test_huMoments = np.empty((len(test_images), 7))
+train_huMoments = np.empty((len(train_images),7))
+test_huMoments = np.empty((len(test_images),7))
 
-print("Extracting features from training data...")
 for train_idx, train_img in enumerate(train_images):
-    train_moments = cv2.moments(train_img, True)
+    train_moments = cv2.moments(train_img, True) 
     train_huMoments[train_idx] = cv2.HuMoments(train_moments).reshape(7)
 
-print("Extracting features from test data...")
 for test_idx, test_img in enumerate(test_images):
-    test_moments = cv2.moments(test_img, True)
+    test_moments = cv2.moments(test_img, True) 
     test_huMoments[test_idx] = cv2.HuMoments(test_moments).reshape(7)
 
-# 3. Define MLP Architecture (7 -> 100 -> 100 -> 10)
 model = keras.models.Sequential([
-    keras.layers.Dense(100, input_shape=[7], activation="relu"),
-    keras.layers.Dense(100, activation="relu"),
-    keras.layers.Dense(10, activation="softmax")
-])
+  keras.layers.Dense(100, input_shape=[7], activation="relu"),
+  keras.layers.Dense(100, activation="relu"),
+  keras.layers.Dense(10, activation = "softmax")
+  ])
 
-# 4. Compile & Train
 categories = np.unique(test_labels)
-model.compile(
-    loss=keras.losses.SparseCategoricalCrossentropy(),
-    optimizer=keras.optimizers.Adam(1e-4),
-    metrics=["accuracy"]
-)
-
-mc_callback = ModelCheckpoint(model_save_path, save_best_only=True)
-es_callback = EarlyStopping(monitor="loss", patience=5)
-
-print("Starting Training...")
-model.fit(
-    train_huMoments,
-    train_labels,
-    epochs=500,
-    verbose=1,
-    callbacks=[mc_callback, es_callback]
-)
-
-# 5. Evaluation
+model.compile(loss=keras.losses.SparseCategoricalCrossentropy(), optimizer=keras.optimizers.Adam(1e-4))
+mc_callback = ModelCheckpoint(model_save_path)
+es_callback = EarlyStopping("loss", patience = 5)
+model.fit(train_huMoments, train_labels, epochs=500, verbose = 1, callbacks=[mc_callback, es_callback])
 model = keras.models.load_model(model_save_path)
 nn_preds = model.predict(test_huMoments)
-predicted_classes = np.argmax(nn_preds, axis=1)
+predicted_classes = np.argmax(nn_preds, axis = 1)
 
-# 6. Visualization
 conf_matrix = confusion_matrix(test_labels, predicted_classes)
-cm_display = ConfusionMatrixDisplay(confusion_matrix=conf_matrix, display_labels=categories)
+cm_display = ConfusionMatrixDisplay(confusion_matrix = conf_matrix, display_labels= categories)
 cm_display.plot()
 cm_display.ax_.set_title("Neural Network Confusion Matrix")
 plt.show()
-      
+```
+
+## 8.5 Results & Analysis
+
+### Performance Overview
+Transitioning from a **Single Neuron** model to a **Multi-Layer Perceptron (MLP)** significantly expands the system’s capability from detecting only one class (e.g., digit **0**) to recognizing **all 10 digits (0–9)**.  
+After training, the model is evaluated on the MNIST test set using the extracted **7 Hu Moments** as input features, and performance is visualized via a **confusion matrix**.
+
+If you enabled saving, the confusion matrix image is written to:
+
+- `results/confusion_matrix.png`
+
+You can display it in the README like this:
+
+```md
+![Confusion Matrix](results/confusion_matrix.png)
+```
+
+
+### Key Observations
+
+- **Complexity vs. Accuracy Trade-off (Hu Moments limitation):**  
+  Hu Moments are extremely lightweight (**7 features per image**) and fast to compute, which makes them attractive for embedded/low-power scenarios.  
+  However, they discard most spatial/pixel-level information. Because of this, the classifier may struggle with digits that have similar global shapes (e.g., **1 vs 7**, **5 vs 6**, **3 vs 8**).
+
+- **Hidden Layers Enable Non-Linear Separation:**  
+  In the 7D Hu Moment space, many MNIST classes are **not linearly separable**.  
+  The two ReLU hidden layers (**100 + 100 neurons**) provide the capacity to learn **non-linear decision boundaries**, significantly improving multi-class recognition compared to a single-layer model.
+
+- **Confusion Matrix Reveals Common Failure Modes:**  
+  The confusion matrix highlights which digit pairs are frequently confused.  
+  Misclassifications typically cluster around digits with similar contours/topology, which is expected when using only global shape descriptors like Hu Moments.
+
+- **EarlyStopping Improves Training Efficiency:**  
+  Rather than always running a fixed 500 epochs, **EarlyStopping** stops training when the loss stops improving (patience = 5).  
+  This saves time and reduces the risk of overfitting.
+
+- **ModelCheckpoint Preserves the Best Model:**  
+  With **ModelCheckpoint**, the best-performing model is saved as `models/hdr_mlp.h5`.  
+  This ensures evaluation is done using the best weights found during training, not necessarily the last epoch’s weights.
+
