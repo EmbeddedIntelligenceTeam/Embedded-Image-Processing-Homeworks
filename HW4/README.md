@@ -1,11 +1,11 @@
 # EE4065 – Embedded Digital Image Processing
 ### **Homework 3**
-**Due Date:** December 19, 2025  
+**Due Date:** December 26, 2025  
 **Team Members:**
 - **Taner KAHYAOĞLU**
 - **Yusuf ZİVAROĞLU**
 
-**High İmportant** you should use python version 3.8 for this homework codes
+**High Important** you should use python version 3.8 for this homework codes
 ---
 
 # 7. Application 1 — Single Neuron Classifier with Hu Moments
