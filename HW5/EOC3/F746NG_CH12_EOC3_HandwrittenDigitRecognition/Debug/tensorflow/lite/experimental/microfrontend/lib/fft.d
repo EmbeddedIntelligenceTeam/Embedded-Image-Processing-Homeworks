@@ -1,0 +1,12 @@
+tensorflow/lite/experimental/microfrontend/lib/fft.o: \
+ ../tensorflow/lite/experimental/microfrontend/lib/fft.cc \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/fft.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/kiss_fft_int16.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/kiss_fft_common.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/third_party/kissfft/kiss_fft.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/third_party/kissfft/tools/kiss_fftr.h
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/fft.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/kiss_fft_int16.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/kiss_fft_common.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/third_party/kissfft/kiss_fft.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/third_party/kissfft/tools/kiss_fftr.h:

@@ -1,0 +1,5 @@
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:32:19:CountLeadingZeros32	16	static
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:51:19:MostSignificantBit32	16	static
+../tensorflow/lite/experimental/microfrontend/lib/log_scale.c:29:17:Log2FractionPart	56	static
+../tensorflow/lite/experimental/microfrontend/lib/log_scale.c:49:17:Log	72	static
+../tensorflow/lite/experimental/microfrontend/lib/log_scale.c:60:11:LogScaleApply	48	static

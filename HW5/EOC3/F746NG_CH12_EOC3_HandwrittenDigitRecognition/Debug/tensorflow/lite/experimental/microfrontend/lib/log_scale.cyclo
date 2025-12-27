@@ -1,0 +1,5 @@
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/bits.h:32:19:CountLeadingZeros32	2
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/experimental/microfrontend/lib/bits.h:51:19:MostSignificantBit32	1
+../tensorflow/lite/experimental/microfrontend/lib/log_scale.c:29:17:Log2FractionPart	2
+../tensorflow/lite/experimental/microfrontend/lib/log_scale.c:49:17:Log	1
+../tensorflow/lite/experimental/microfrontend/lib/log_scale.c:60:11:LogScaleApply	5

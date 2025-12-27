@@ -1,0 +1,4 @@
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control_util.c:22:6:PcanGainControlFillConfigWithDefaults	1
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control_util.c:30:9:PcanGainLookupFunction	2
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control_util.c:43:5:PcanGainControlPopulateState	5
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control_util.c:90:6:PcanGainControlFreeStateContents	1

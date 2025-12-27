@@ -1,0 +1,26 @@
+tensorflow/lite/kernels/kernel_util.o: \
+ ../tensorflow/lite/kernels/kernel_util.cc \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/kernel_util.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/core/c/builtin_op_data.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/core/c/common.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/core/c/c_api_types.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/op_macros.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/micro/micro_log.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/context_util.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/cppmath.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/quantization_util.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/compatibility.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/types.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/runtime_shape.h
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/kernel_util.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/core/c/builtin_op_data.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/core/c/common.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/core/c/c_api_types.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/op_macros.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/micro/micro_log.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/context_util.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/cppmath.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/quantization_util.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/compatibility.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/types.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/kernels/internal/runtime_shape.h:

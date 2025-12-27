@@ -1,0 +1,10 @@
+../Drivers/CMSIS/Include/core_cm7.h:2229:22:void SCB_EnableICache()	1
+../Drivers/CMSIS/Include/core_cm7.h:2281:22:void SCB_EnableDCache()	3
+D:\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\arm-none-eabi\thumb\v7e-m+fp\hard\bits\gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	1
+../Core/Src/main.cpp:100:5:int main()	3
+../Core/Src/main.cpp:182:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:227:13:void MX_DCMI_Init()	2
+../Core/Src/main.cpp:264:13:void MX_USART1_UART_Init()	2
+../Core/Src/main.cpp:295:13:void MX_FMC_Init()	2
+../Core/Src/main.cpp:346:13:void MX_GPIO_Init()	1
+../Core/Src/main.cpp:753:6:void Error_Handler()	1

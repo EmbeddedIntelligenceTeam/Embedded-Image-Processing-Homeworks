@@ -1,0 +1,10 @@
+tensorflow/lite/kernels/internal/portable_tensor_utils.o: \
+ ../tensorflow/lite/kernels/internal/portable_tensor_utils.cc \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/kernels/internal/portable_tensor_utils.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/core/c/builtin_op_data.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/core/c/common.h \
+ C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/core/c/c_api_types.h
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/kernels/internal/portable_tensor_utils.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/core/c/builtin_op_data.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/core/c/common.h:
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/core/c/c_api_types.h:

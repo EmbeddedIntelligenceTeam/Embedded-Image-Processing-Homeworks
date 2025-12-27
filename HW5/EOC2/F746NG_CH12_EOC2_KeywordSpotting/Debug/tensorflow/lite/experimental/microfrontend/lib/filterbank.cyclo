@@ -1,0 +1,10 @@
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:32:19:CountLeadingZeros32	2
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:51:19:MostSignificantBit32	1
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:64:19:CountLeadingZeros64	3
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:94:19:MostSignificantBit64	1
+../tensorflow/lite/experimental/microfrontend/lib/filterbank.c:21:6:FilterbankConvertFftComplexToEnergy	2
+../tensorflow/lite/experimental/microfrontend/lib/filterbank.c:37:6:FilterbankAccumulateChannels	3
+../tensorflow/lite/experimental/microfrontend/lib/filterbank.c:66:17:Sqrt32	7
+../tensorflow/lite/experimental/microfrontend/lib/filterbank.c:91:17:Sqrt64	7
+../tensorflow/lite/experimental/microfrontend/lib/filterbank.c:119:11:FilterbankSqrt	2
+../tensorflow/lite/experimental/microfrontend/lib/filterbank.c:132:6:FilterbankReset	1

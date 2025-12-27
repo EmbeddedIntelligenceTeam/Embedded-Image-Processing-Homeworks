@@ -1,0 +1,2 @@
+../Core/Src/lib_serial.c:17:8:LIB_SERIAL_Transmit	10
+../Core/Src/lib_serial.c:69:8:LIB_SERIAL_Receive	12

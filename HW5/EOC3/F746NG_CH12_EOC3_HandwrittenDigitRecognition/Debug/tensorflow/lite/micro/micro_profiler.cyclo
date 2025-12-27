@@ -1,0 +1,13 @@
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/micro/micro_profiler_interface.h:26:11:tflite::MicroProfilerInterface::~MicroProfilerInterface()	1
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/micro/micro_profiler_interface.h:26:11:virtual tflite::MicroProfilerInterface::~MicroProfilerInterface()	1
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/micro/micro_profiler.h:90:3:static void tflite::MicroProfiler::operator delete(void*)	1
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/micro/micro_time.h:29:17:uint32_t tflite::TicksToMs(int32_t)	1
+../tensorflow/lite/micro/micro_profiler.cc:27:10:virtual uint32_t tflite::MicroProfiler::BeginEvent(const char*)	1
+../tensorflow/lite/micro/micro_profiler.cc:42:6:virtual void tflite::MicroProfiler::EndEvent(uint32_t)	1
+../tensorflow/lite/micro/micro_profiler.cc:47:10:uint32_t tflite::MicroProfiler::GetTotalTicks() const	2
+../tensorflow/lite/micro/micro_profiler.cc:55:6:void tflite::MicroProfiler::Log() const	2
+../tensorflow/lite/micro/micro_profiler.cc:64:6:void tflite::MicroProfiler::LogCsv() const	2
+../tensorflow/lite/micro/micro_profiler.cc:79:6:void tflite::MicroProfiler::LogTicksPerTagCsv()	4
+../tensorflow/lite/micro/micro_profiler.cc:112:5:int tflite::MicroProfiler::FindExistingOrNextPosition(const char*)	5
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/micro/micro_profiler.h:31:11:tflite::MicroProfiler::~MicroProfiler()	1
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application3-HDR/F746NG_CH12_EOC3_HandwrittenDigitRecognition/tensorflow/lite/micro/micro_profiler.h:31:11:virtual tflite::MicroProfiler::~MicroProfiler()	1

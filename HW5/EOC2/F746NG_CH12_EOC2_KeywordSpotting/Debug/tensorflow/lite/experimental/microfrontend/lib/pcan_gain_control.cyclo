@@ -1,0 +1,5 @@
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:32:19:CountLeadingZeros32	2
+C:/Users/fusuy/Desktop/Embedded-Machine-Learning-with-Microcontrollers-Applications-on-STM32-Development-Boards-main/Chapter12/Application2-KWS/F746NG_CH12_EOC2_KeywordSpotting/tensorflow/lite/experimental/microfrontend/lib/bits.h:51:19:MostSignificantBit32	1
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control.c:19:9:WideDynamicFunction	3
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control.c:39:10:PcanShrink	2
+../tensorflow/lite/experimental/microfrontend/lib/pcan_gain_control.c:47:6:PcanGainControlApply	2

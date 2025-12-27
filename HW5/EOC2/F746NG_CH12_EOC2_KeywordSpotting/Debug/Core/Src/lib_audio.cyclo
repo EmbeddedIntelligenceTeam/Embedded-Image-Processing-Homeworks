@@ -1,0 +1,6 @@
+../Core/Src/lib_audio.c:39:8:LIB_AUDIO_Init	2
+../Core/Src/lib_audio.c:54:6:LIB_AUDIO_StartRecording	2
+../Core/Src/lib_audio.c:80:8:LIB_AUDIO_PollForRecording	3
+../Core/Src/lib_audio.c:98:6:LIB_AUDIO_StopRecording	1
+../Core/Src/lib_audio.c:108:6:BSP_AUDIO_IN_TransferComplete_CallBack	3
+../Core/Src/lib_audio.c:134:6:DMA2_Stream7_IRQHandler	1

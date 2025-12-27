@@ -1,0 +1,6 @@
+../tensorflow/lite/experimental/microfrontend/lib/filterbank_util.c:24:6:FilterbankFillConfigWithDefaults	1
+../tensorflow/lite/experimental/microfrontend/lib/filterbank_util.c:31:14:FreqToMel	1
+../tensorflow/lite/experimental/microfrontend/lib/filterbank_util.c:33:13:CalculateCenterFrequencies	2
+../tensorflow/lite/experimental/microfrontend/lib/filterbank_util.c:50:13:QuantizeFilterbankWeights	1
+../tensorflow/lite/experimental/microfrontend/lib/filterbank_util.c:56:5:FilterbankPopulateState	20
+../tensorflow/lite/experimental/microfrontend/lib/filterbank_util.c:213:6:FilterbankFreeStateContents	1
