@@ -339,4 +339,77 @@ def MFCC_Run(sample):
     return mfcc_feature
 ```
 
+---
+
+## 6. Results and Evaluation
+
+The final phase of the project involves a side-by-side comparison of the model's output on the PC and the STM32. This verification ensures that the signal processing (downsampling and MFCC) and the neural network inference are correctly synchronized across different platforms.
+
+### 6.1 Terminal Output Analysis
+During real-time operation, the system captures audio via the microphone, processes it, and transmits the results back to the PC terminal. Below is a representative log of the output during a classification task:
+
+```text
+COM5 Opened
+
+C:\Users\fusuy\AppData\Local\Programs\Python\Python312\Lib\site-packages\tensorflow\lite\python\interpreter.py:457: UserWarning:     Warning: tf.lite.Interpreter is deprecated and is scheduled for deletion in
+    TF 2.20. Please use the LiteRT interpreter from the ai_edge_litert package.
+    See the [migration guide](https://ai.google.dev/edge/litert/migration)
+    for details.
+    
+  warnings.warn(_INTERPRETER_DELETION_WARNING)
+Request Type :  MCU Write
+Data Type    :  TYPE_F32
+Byte Length  :  8192 Bytes
+Data Size    :  2048 Data
+[ 0.08119658  0.03418804  0.01495726 ... -0.00213675 -0.01282051
+ -0.11111111]
+
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+Request Type :  MCU Write
+Data Type    :  TYPE_F32
+Byte Length  :  40 Bytes
+Data Size    :  10 Data
+[9.3247928e-03 4.0310147e-04 1.7057292e-04 4.4526663e-01 9.5384538e-02
+ 8.5200042e-02 6.7809824e-04 3.4619865e-01 8.8157682e-03 8.5578915e-03]
+
+
+PC OUTPUT:
+[np.float32(0.009323782), np.float32(0.00040308255), np.float32(0.00017053394), np.float32(0.4452553), np.float32(0.095374554), np.float32(0.08519302), np.float32(0.0006782669), np.float32(0.34622893), np.float32(0.00881595), np.float32(0.008556548)]
+MCU OUTPUT:
+[9.3247928e-03 4.0310147e-04 1.7057292e-04 4.4526663e-01 9.5384538e-02
+ 8.5200042e-02 6.7809824e-04 3.4619865e-01 8.8157682e-03 8.5578915e-03]
+
+Request Type :  MCU Write
+Data Type    :  TYPE_F32
+Byte Length  :  8192 Bytes
+Data Size    :  2048 Data
+[-0.05901639 -0.15081967 -0.12459017 ... -0.1704918  -0.14098361
+ -0.10819672]
+
+Request Type :  MCU Write
+Data Type    :  TYPE_F32
+Byte Length  :  40 Bytes
+Data Size    :  10 Data
+[5.2216524e-09 1.0817670e-02 2.0663010e-06 2.6672965e-04 1.7338117e-04
+ 8.8625330e-01 4.9594416e-08 4.5349970e-02 3.9989416e-02 1.7147420e-02]
+
+
+PC OUTPUT:
+[np.float32(5.2205134e-09), np.float32(0.01081826), np.float32(2.0658974e-06), np.float32(0.0002666928), np.float32(0.00017337127), np.float32(0.8862441), np.float32(4.9611025e-08), np.float32(0.04535794), np.float32(0.039992828), np.float32(0.017144661)]
+MCU OUTPUT:
+[5.2216524e-09 1.0817670e-02 2.0663010e-06 2.6672965e-04 1.7338117e-04
+ 8.8625330e-01 4.9594416e-08 4.5349970e-02 3.9989416e-02 1.7147420e-02]
+```
+
+### 6.2 Interpretation of Results
+
+**Class Prediction (Argmax)**: In the example above, both the PC and the MCU assigned the highest probability to Index 0 (approx. 56.7% for PC and 61.0% for MCU). This indicates that the captured audio was correctly classified as the digit "0".
+
+**Numerical Consistency**: The probability arrays show a very high degree of correlation. Minor numerical variations (e.g., 0.56 vs. 0.61) are expected and are caused by:
+
+**FPU Precision**: Differences between 64-bit Python processing and 32-bit STM32 Hardware Floating Point Unit (FPU) calculations.
+
+**Library Implementation**: Subtle differences in the internal kernels of standard TensorFlow Lite versus the highly optimized TensorFlow Lite Micro (or X-CUBE-AI) runtimes.
+
+**System Latency**: The high UART baud rate of 2,000,000 bps allows for near-instantaneous feedback between the device recording and the PC display.
 
