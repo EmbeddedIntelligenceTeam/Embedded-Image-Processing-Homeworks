@@ -28,7 +28,6 @@ Raw audio data is high-dimensional and computationally expensive for microcontro
 * **Feature Vector:** Each audio recording is fixed to 2048 samples ($2 \times FFTSize$) and split into two halves. 13 MFCC coefficients are extracted from each half, resulting in a total input vector of **26 features**.
 
 
-
 ---
 
 ## 2. Model Architecture and Training
@@ -470,5 +469,32 @@ A Multi-Layer Perceptron (MLP) was trained using the extracted Hu Moments as inp
 
 **Model Checkpointing**: The best model state was automatically saved as hdr_mlp.h5.
 
+---
 
+## 3. Model Conversion (TFLite Micro Deployment)
 
+To bridge the gap between Python training and embedded execution, the model undergoes a conversion process into a C-compatible format.
+
+### Step 1: TFLite Flatbuffer Generation
+
+The Keras `.h5` model is converted into a serialized `.tflite` file. This format is optimized for mobile and embedded devices.
+
+```python
+import tensorflow as tf
+from keras.models import load_model
+
+model = load_model("hdr_mlp.h5")
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+```
+
+### Step 2: C Array Export
+
+Using the `convert_tflite2cc` utility, the TFLite model is converted into a C source array. This allows the STM32 to store the model directly in its Flash memory, eliminating the need for an external file system.
+
+```python
+from Common.tflite2cc import convert_tflite2cc
+
+# Generates hdr_mlp.c and hdr_mlp.h
+convert_tflite2cc(tflite_model, "hdr_mlp")
+```
