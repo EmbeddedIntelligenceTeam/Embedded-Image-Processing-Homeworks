@@ -76,12 +76,12 @@ After converting the model into C arrays, the firmware was developed in STM32 Cu
 ### 4.1 Prerequisites & Libraries
 The implementation relies on several custom libraries to abstract hardware complexity:
 
-**lib_model.h**: Manages the TensorFlow Lite Micro interpreter, tensor arena, and inference execution.
+`lib_model.h`: Manages the TensorFlow Lite Micro interpreter, tensor arena, and inference execution.
 
-**lib_audio.h**: Interface for the onboard microphone to capture raw PCM data.
+`lib_audio.h`: Interface for the onboard microphone to capture raw PCM data.
 
-**ks_feature_extraction.h**: Implements the MFCC algorithm (utilizing CMSIS-DSP) to match the training pipeline.
+`ks_feature_extraction.h`: Implements the MFCC algorithm (utilizing CMSIS-DSP) to match the training pipeline.
 
-**mlp_fsdd_model.h**: Contains the exported C array of the trained TFLite model.
+`mlp_fsdd_model.h`: Contains the exported C array of the trained TFLite model.
 
-**lib_serial.h**: Handles high-speed data transmission to the PC via UART.
+`lib_serial.h`: Handles high-speed data transmission to the PC via UART.
