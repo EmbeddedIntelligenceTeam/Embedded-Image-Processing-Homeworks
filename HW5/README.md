@@ -122,3 +122,13 @@ Normalization: Data is converted to `float32` and normalized by the absolute max
 The processed audio is passed to `ks_mfcc_extract_features`.
 
 Two windows of 1024 samples are processed to generate 26 MFCC features (13 per window), matching the model's input shape.
+
+#### Inference:
+
+Features are copied into the TFLite input tensor using `memcpy`.
+
+`LIB_MODEL_Run(&output)` is called to perform the forward pass.
+
+#### Data Synchronization:
+
+The MCU transmits both the normalized audio data and the final inference results (10-class Softmax output) to the PC for real-time validation.
