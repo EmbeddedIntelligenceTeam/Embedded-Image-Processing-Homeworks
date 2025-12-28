@@ -85,3 +85,14 @@ The implementation relies on several custom libraries to abstract hardware compl
 `mlp_fsdd_model.h`: Contains the exported C array of the trained TFLite model.
 
 `lib_serial.h`: Handles high-speed data transmission to the PC via UART.
+
+
+### 4.2 System Configuration
+
+*Microcontroller*: STM32 (High-performance series).
+
+*UART Baudrate*: 2,000,000 bps (configured for high-speed transmission of audio buffers and inference results).
+
+*Tensor Arena Size*: 136 KB (allocated for TFLite Micro intermediate calculations).
+
+*Audio Setup*: Raw recording downsampled to 8 kHz Mono to match the FSDD dataset specifications.
