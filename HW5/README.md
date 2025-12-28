@@ -422,3 +422,53 @@ MCU OUTPUT:
 **Efficient Inference**: The MLP model, despite having 100-neuron hidden layers, runs efficiently within the STM32's 136 KB Tensor Arena.
 
 **End-to-End Workflow**: We successfully navigated the full pipeline from raw FSDD dataset recordings to real-time embedded classification using TFLite Micro.
+
+---
+
+# HW5 - EOC3: Handwritten Digit Recognition (HDR) using Hu Moments
+
+This project implements an efficient Handwritten Digit Recognition system on an STM32 microcontroller. Unlike traditional methods that process raw pixel data, this implementation extracts Hu Moments—a set of 7 invariant descriptors—to classify digits. This approach significantly reduces the input dimensionality and provides resistance to changes in scale, rotation, and translation.
+
+## 1. Feature Extraction (Hu Moments)
+
+The core innovation of this project is the use of Image Moments to describe handwritten digits. Using raw $28 \times 28$ MNIST images would require 784 input neurons; however, by calculating Hu Moments, we compress this data into just 7 robust features per image.
+
+### Preprocessing Workflow:
+
+**Dataset**: The standard MNIST dataset of handwritten digits.
+
+**Moment Calculation**: For each image, central moments are calculated using OpenCV's `cv2.moments`.
+
+**Hu Moments Transformation**: These moments are then transformed into 7 Hu Moments using `cv2.HuMoments`, which are invariant to image transformations.
+
+**Dimensionality Reduction**: This process reduces the input data size by 99.1% (from 784 pixels to 7 features), making it ideal for resource-constrained microcontrollers.
+
+---
+
+## 2. Model Architecture and Training
+
+A Multi-Layer Perceptron (MLP) was trained using the extracted Hu Moments as inputs.
+
+### Model Structure:
+
+**Input Layer**: 7 Neurons (representing the 7 Hu Moments).
+
+**Hidden Layer 1**: 100 Neurons with ReLU activation.
+
+**Hidden Layer 2**: 100 Neurons with ReLU activation.
+
+**Output Layer**: 10 Neurons with Softmax activation (representing digits 0-9).
+
+
+## Training Configuration:
+
+**Optimizer**: Adam with a learning rate of $1 \times 10^{-4}$.
+
+**Loss Function**: Sparse Categorical Crossentropy.
+
+**Regularization**: Early Stopping was implemented to monitor loss with a patience of 5 epochs to prevent overfitting.
+
+**Model Checkpointing**: The best model state was automatically saved as hdr_mlp.h5.
+
+
+
