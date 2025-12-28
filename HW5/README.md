@@ -132,3 +132,91 @@ Features are copied into the TFLite input tensor using `memcpy`.
 #### Data Synchronization:
 
 The MCU transmits both the normalized audio data and the final inference results (10-class Softmax output) to the PC for real-time validation.
+
+
+---
+
+### 4.4 Code Snippet
+
+```c 
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "lib_audio.h"
+#include "lib_serial.h"
+#include "ks_feature_extraction.h"
+#include "lib_model.h"
+#include "mlp_fsdd_model.h"
+
+/* USER CODE END Includes */
+```
+
+```c
+/* USER CODE BEGIN 0 */
+#define BUFFER_SIZE		(8*1024)
+int16_t AudioBuffer[BUFFER_SIZE] = {0};
+int16_t AudioBufferDown[BUFFER_SIZE/4] = {0};
+float32_t AudioBufferF32Down[BUFFER_SIZE/4] = {0}; // Downsampled 8KHz mono
+float32_t ExtractedFeatures[nbDctOutputs * 2] = {0};
+
+constexpr int kTensorArenaSize = 136 * 1024;
+alignas(16) static uint8_t tensor_arena[kTensorArenaSize];
+TfLiteTensor* input = nullptr;
+TfLiteTensor* output = nullptr;
+
+/* USER CODE END 0 */
+```
+
+```c
+/* USER CODE BEGIN 2 */
+  LIB_AUDIO_Init();
+  ks_mfcc_init();
+  LIB_MODEL_Init(converted_model_tflite, &input, tensor_arena, kTensorArenaSize);
+  /* USER CODE END 2 */
+```
+
+```c
+ /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+	/*ACQUIRE AUDIO DATA FROM MIC*/
+	LIB_AUDIO_StartRecording((uint16_t*)AudioBuffer, BUFFER_SIZE);
+	/*WAIT UNTIL AUDIO DATA IS READY*/
+	if (LIB_AUDIO_PollForRecording(5000) == 0)
+	{
+		int16_t max = 0; uint32_t idx = 0, i = 0, j = 0;
+		/* DOWNSAMPLING TO MONO AND 8KHZ */
+		for (i = 0; i < BUFFER_SIZE/4; ++i)
+		{
+		  AudioBufferDown[i] = AudioBuffer[j];
+		  j = j + 4;
+		}
+		arm_absmax_q15(AudioBufferDown, BUFFER_SIZE/4, &max, &idx);
+		for (i = 0; i < BUFFER_SIZE/4; ++i)
+		{
+			AudioBufferF32Down[i] = (float32_t)AudioBufferDown[i]/(float32_t)max;
+		}
+
+		/*SEND AUDIO DATA TO PC*/
+		LIB_SERIAL_Transmit(AudioBufferF32Down, BUFFER_SIZE/4, TYPE_F32);
+
+		/* FEATURE EXTRACTION */
+		ks_mfcc_extract_features(AudioBufferF32Down, ExtractedFeatures);
+		ks_mfcc_extract_features(&AudioBufferF32Down[1024], &ExtractedFeatures[nbDctOutputs]);
+
+
+		/*RUN INFERENCE ON MCU*/
+		memcpy(input->data.f, ExtractedFeatures, nbDctOutputs*2*sizeof(float));
+		LIB_MODEL_Run(&output);
+
+		/*SEND INFERENCE RESULTS TO PC*/
+		LIB_SERIAL_Transmit(output->data.f, 10, TYPE_F32);
+	}
+  }
+  /* USER CODE END 3 */
+```
