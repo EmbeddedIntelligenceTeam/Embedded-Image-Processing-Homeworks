@@ -223,6 +223,8 @@ TfLiteTensor* output = nullptr;
   /* USER CODE END 3 */
 ```
 
+![Import CubeIde](EOC2/Figure_1.png)
+
 ---
 
 ## 5. PC-Side Integration and Verification
