@@ -545,3 +545,117 @@ To reduce 784 pixels (28x28) into 7 invariant descriptors, the firmware executes
 *Raw Moments*: Calculated from the grayscale image using hdr_calculate_moments.
 
 *Hu Moments*: The raw moments are transformed into 7 Hu Moments using hdr_calculate_hu_moments.
+
+
+### 4.4 Inference and Communication
+
+Once the 7 features are extracted, the system performs the following steps:
+
+**Loading Input**: The 7 Hu Moments are copied into the model's input tensor using `memcpy.`
+
+**Model Execution**: `LIB_MODEL_Run` executes the MLP model stored in Flash `(hdr_mlp.h)`.
+
+**Data Transmission**:
+
+The grayscale image is sent to the PC for visual feedback using `LIB_SERIAL_IMG_Transmit`.
+
+The 10-class Softmax output (probabilities for digits 0-9) is transmitted via UART for validation.
+
+---
+
+### 4.5 Code Snippet
+
+```c
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "../../Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.h"
+#include "lib_image.h"
+#include "lib_ov5640.h"
+#include "lib_serialimage.h"
+#include "lib_serial.h"
+#include "lib_mpu.h"
+#include "lib_rgb2gray.h"
+#include "lib_slidingwindow.h"
+#include "hdr_feature_extraction.h"
+#include "lib_model.h"
+#include "hdr_mlp.h"
+
+/* USER CODE END Includes */
+```
+
+```c
+/* USER CODE BEGIN 0 */
+__attribute__((section(".sdram_data"))) uint8_t pImage[640*480*2];
+__attribute__((section(".sdram_data"))) uint8_t pImageCropped[320*320*2];
+__attribute__((section(".sdram_data"))) uint8_t pImageCroppedGray[320*320*1];
+__attribute__((section(".sdram_data"))) float pImageCroppedGrayF32[320*320*1];
+HDR_FtrExtOutput features;
+IMAGE_HandleTypeDef img, cropped, croppedGray;
+SW_TypeDef sw =
+{
+	.input_image = &img,
+	.output_image = &cropped
+};
+
+constexpr int kTensorArenaSize = 136 * 1024;
+alignas(16) static uint8_t tensor_arena[kTensorArenaSize];
+TfLiteTensor* input = nullptr;
+TfLiteTensor* output = nullptr;
+
+
+/* USER CODE END 0 */
+```
+
+```c
+/* USER CODE BEGIN 2 */
+  LIB_MPU_Init();
+  LIB_IMAGE_InitStruct(&img, (uint8_t*)pImage, IMAGE_RESOLUTION_VGA_HEIGHT, IMAGE_RESOLUTION_VGA_WIDTH, IMAGE_FORMAT_RGB565);
+  LIB_IMAGE_InitStruct(&cropped, (uint8_t*)pImageCropped, 320, 320, IMAGE_FORMAT_RGB565);
+  LIB_IMAGE_InitStruct(&croppedGray, (uint8_t*)pImageCroppedGray, 320, 320, IMAGE_FORMAT_GRAYSCALE);
+  LIB_SW_Init(&sw);
+  BSP_SDRAM_Init();
+  LIB_OV5640_Init(OV5640_RESOLUTION_R640x480, OV5640_FORMAT_RGB565);
+  LIB_MODEL_Init(converted_model_tflite, &input, tensor_arena, kTensorArenaSize);
+
+  /* USER CODE END 2 */
+```
+
+```c
+ /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+	if (!LIB_OV5640_CaptureSnapshot(&img, 5000))
+	{
+		// Preprocess Image
+		LIB_SW_GetWindow(&sw);
+		LIB_RGB2GRAY_Convert565(&cropped, &croppedGray);
+		uint32_t i;
+		for (i = 0; i < croppedGray.height * cropped.width; ++i)
+		{
+			pImageCroppedGrayF32[i] = (float)croppedGray.pData[i];
+		}
+		// Transmit Image to PC
+		LIB_SERIAL_IMG_Transmit(&croppedGray);
+		// Extract Features
+		hdr_calculate_moments(&croppedGray, &features);
+		hdr_calculate_hu_moments(&features);
+
+		memcpy(input->data.f, (void*)&features.hu_moments, sizeof(features));
+		LIB_MODEL_Run(&output);
+
+		// Transmit Moments to PC
+		LIB_SERIAL_Transmit(output->data.f, 10, TYPE_F32);
+	}
+  }
+  /* USER CODE END 3 */
+```
+
+---
+
+![Import CubeIde](EOC3/Figure2.png)
