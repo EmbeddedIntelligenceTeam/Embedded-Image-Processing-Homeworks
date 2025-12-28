@@ -98,13 +98,27 @@ The implementation relies on several custom libraries to abstract hardware compl
 *Audio Setup*: Raw recording downsampled to 8 kHz Mono to match the FSDD dataset specifications.
 
 
-4.3 Firmware Logic Flow
+### 4.3 Firmware Logic Flow
 The main.c follows a linear pipeline within the infinite loop:
 
-Initialization:
+#### Initialization:
 
-LIB_AUDIO_Init(): Configures the microphone peripherals.
+`LIB_AUDIO_Init()`: Configures the microphone peripherals.
 
-ks_mfcc_init(): Sets up the MFCC instance (filters, DCT matrices).
+`ks_mfcc_init()`: Sets up the MFCC instance (filters, DCT matrices).
 
-LIB_MODEL_Init(...): Loads the converted_model_tflite into the tensor arena and maps the input/output tensors.
+`LIB_MODEL_Init(...)`: Loads the converted_model_tflite into the tensor arena and maps the input/output tensors.
+
+#### Audio Acquisition:
+
+The system records a chunk of audio into `AudioBuffer`.
+
+Downsampling: The buffer is downsampled by a factor of 4 to reach the target 8 kHz sampling rate.
+
+Normalization: Data is converted to `float32` and normalized by the absolute maximum value found in the buffer.
+
+#### Feature Extraction:
+
+The processed audio is passed to `ks_mfcc_extract_features`.
+
+Two windows of 1024 samples are processed to generate 26 MFCC features (13 per window), matching the model's input shape.
