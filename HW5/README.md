@@ -96,3 +96,15 @@ The implementation relies on several custom libraries to abstract hardware compl
 *Tensor Arena Size*: 136 KB (allocated for TFLite Micro intermediate calculations).
 
 *Audio Setup*: Raw recording downsampled to 8 kHz Mono to match the FSDD dataset specifications.
+
+
+4.3 Firmware Logic Flow
+The main.c follows a linear pipeline within the infinite loop:
+
+Initialization:
+
+LIB_AUDIO_Init(): Configures the microphone peripherals.
+
+ks_mfcc_init(): Sets up the MFCC instance (filters, DCT matrices).
+
+LIB_MODEL_Init(...): Loads the converted_model_tflite into the tensor arena and maps the input/output tensors.
