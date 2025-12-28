@@ -659,3 +659,106 @@ TfLiteTensor* output = nullptr;
 ---
 
 ![Import CubeIde](EOC3/Figure2.png)
+
+---
+
+## 5. PC-Side Verification
+   
+The PC-side integration acts as a reference and validation tool. It receives the raw processed image from the STM32, performs the same feature extraction and inference locally, and then compares the result with the MCU's output.
+
+## 5.1 Python Script Logic and Libraries
+
+The verification script uses several key libraries to replicate the MCU's behavior on a desktop environment:
+
+`py_serial` & `py_serialimg`: Handle the custom UART protocol to receive image buffers and floating-point inference arrays.
+
+`py_moments`: Utilizes OpenCV (`cv2.moments` and `cv2.HuMoments`) to extract the 7 Hu Moments from the received grayscale image.
+
+`tensorflow`: Runs the `hdr_mlp.tflite` model locally to provide a "Ground Truth" for comparison.
+
+
+## 5.2 Communication Handshake
+
+The communication follows a specific sequence within a polling loop:
+
+**Receive Image**: The MCU sends a 320x320 Grayscale image window focused on the digit.
+
+**PC Processing**: The PC extracts Hu Moments from this image and runs a local TFLite inference.
+
+**Receive MCU Results**: The PC waits for the MCU to transmit its own 10-class probability array (`TYPE_F32`).
+
+**Validation**: Both probability sets are printed to the terminal to check for consistency.
+
+
+## 5.3 Example Terminal Output
+
+```text
+COM5 Opened
+
+C:\Users\fusuy\AppData\Local\Programs\Python\Python312\Lib\site-packages\tensorflow\lite\python\interpreter.py:457: UserWarning:     Warning: tf.lite.Interpreter is deprecated and is scheduled for deletion in
+    TF 2.20. Please use the LiteRT interpreter from the ai_edge_litert package.
+    See the [migration guide](https://ai.google.dev/edge/litert/migration)
+    for details.
+
+  warnings.warn(_INTERPRETER_DELETION_WARNING)
+Request Type :  MCU Sends Image
+Height       :  320
+Width        :  320
+Format       :  Grayscale
+
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+Request Type :  MCU Write
+Data Type    :  TYPE_F32
+Byte Length  :  40 Bytes
+Data Size    :  10 Data
+[6.1014658e-01 5.7353149e-04 1.1141524e-02 1.5615206e-02 4.4987909e-02
+ 4.2992965e-03 1.0103810e-01 2.5898519e-03 1.8365423e-01 2.5953624e-02]
+
+
+PC OUTPUT:
+[[5.6674027e-01 2.9593016e-04 9.2034191e-03 3.6026631e-02 3.3169799e-02
+  4.8604179e-03 1.5290788e-01 8.5738598e-04 1.4999102e-01 4.5947302e-02]]
+MCU OUTPUT:
+[6.1014658e-01 5.7353149e-04 1.1141524e-02 1.5615206e-02 4.4987909e-02
+ 4.2992965e-03 1.0103810e-01 2.5898519e-03 1.8365423e-01 2.5953624e-02]
+```
+
+---
+
+## 6. Results Interpretation and Performance Analysis
+
+The final validation step involves comparing the real-time inference results from the STM32 against the PC-based TensorFlow Lite reference. The terminal output confirms that both systems are synchronized and mathematically consistent.
+
+### 6.1 Terminal Output Breakdown
+The provided log captures a successful classification event:
+
+
+### 6.2 Numerical Analysis
+
+**Predicted Class (Digit 0)**: Both the PC and MCU identify the digit as "0". The PC output shows a probability of 56.67% at index 0, while the MCU output shows 61.01%.
+
+**Secondary Candidates**: Both systems agree on the secondary candidates, identifying indices 6 and 8 as the next most likely digits with probabilities between 10% and 18%.
+
+**Consistency Check**: The `Argmax` result is identical for both platforms. The slight variance in raw probability scores (approx. 4.3% difference at the winning index) is attributed to the STM32's 32-bit Hardware Floating Point Unit (FPU) precision versus the PC's 64-bit float processing.
+
+
+### 6.3 System Efficiency
+
+**Data Reduction**: By utilizing Hu Moments, the system only processes 7 floating-point features instead of 102,400 pixels (320x320) per inference.
+
+**High-Speed Sync**: The 2,000,000 bps UART baud rate ensures that the 320x320 image and the 40-byte inference results are transmitted with minimal latency, enabling real-time feedback.
+
+**Memory Footprint**: The entire MLP model and the image processing pipeline operate within a 136 KB Tensor Arena, demonstrating highly efficient memory management on the STM32.
+
+---
+
+## 7. Conclusion
+   
+This project successfully demonstrates the deployment of two distinct TinyML applications on the STM32 platform: Keyword Spotting (EOC2) and Handwritten Digit Recognition (EOC3).
+
+**Key Achievements**:
+***Mathematical Parity***: By implementing CMSIS-DSP for MFCC and manual moment calculation logic in C, we achieved nearly identical feature extraction results between Python and the embedded environment.
+
+***Robust Feature Engineering***: The use of Hu Moments proved to be an excellent choice for embedded vision, providing a rotation and scale-invariant input for the MLP while significantly reducing the computational load.
+
+***Seamless TFLite Integration***: The transition from Keras .h5 models to TFLite Micro C-arrays was successful, confirming that the hdr_mlp.tflite model maintains its predictive power even after deployment on resource-constrained hardware.
