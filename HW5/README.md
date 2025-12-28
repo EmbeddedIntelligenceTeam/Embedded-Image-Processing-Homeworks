@@ -498,3 +498,50 @@ from Common.tflite2cc import convert_tflite2cc
 # Generates hdr_mlp.c and hdr_mlp.h
 convert_tflite2cc(tflite_model, "hdr_mlp")
 ```
+
+---
+
+## 4. Hardware Implementation (STM32 CubeIDE)
+
+The firmware developed in `STM32 CubeIDE` handles high-resolution image acquisition, complex spatial preprocessing, and real-time neural network inference using the TensorFlow Lite Micro engine.
+
+
+### 4.1 System Configuration and Peripherals
+
+The implementation is designed for high-performance microcontrollers, utilizing several external hardware components:
+
+**Microcontroller & Memory**: Uses an STM32 series board equipped with external SDRAM to manage large frame buffers.
+
+**Camera Interface (DCMI)**: Interfaces with an OV5640 camera module via the Digital Camera Interface (DCMI).
+
+**High-Speed Communication**: UART1 is configured at 2,000,000 bps to handle the high data throughput required for image and probability transmission.
+
+**Memory Optimization**: Instruction and Data caches (I-Cache/D-Cache) are enabled to accelerate image processing routines.
+
+
+### 4.2 Memory Allocation (Buffers and Tensors) 
+
+Because image data is memory-intensive, specific buffers are placed in external SDRAM using the `.sdram_data` section:
+
+`pImage`: A VGA-resolution raw frame buffer (640x480) in RGB565 format.
+
+`pImageCropped`: A 320x320 cropped window focused on the digit.
+
+`pImageCroppedGray`: A grayscale version of the cropped window used for feature extraction.
+
+**Tensor Arena**: A 136 KB memory pool allocated for the TensorFlow Lite Micro interpreter's internal operations.
+
+
+### 4.3 Image Preprocessing Pipeline
+
+To reduce 784 pixels (28x28) into 7 invariant descriptors, the firmware executes a strict preprocessing sequence:
+
+**Sliding Window/Cropping**: A 320x320 window is extracted from the 640x480 VGA frame using the SlidingWindow library.
+
+**Color Conversion**: The cropped image is converted from RGB565 to Grayscale using LIB_RGB2GRAY.
+
+**Spatial Feature Extraction**:
+
+*Raw Moments*: Calculated from the grayscale image using hdr_calculate_moments.
+
+*Hu Moments*: The raw moments are transformed into 7 Hu Moments using hdr_calculate_hu_moments.
