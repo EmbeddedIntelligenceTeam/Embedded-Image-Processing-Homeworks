@@ -415,7 +415,7 @@ MCU OUTPUT:
 
 ## 6.3 Conclusion
 
-The "EOC2 Keyword Spotting" implementation successfully demonstrates the viability of deploying deep learning models on resource-constrained microcontrollers. Key takeaways from this project include:
+**The "EOC2 Keyword Spotting"** implementation successfully demonstrates the viability of deploying deep learning models on resource-constrained microcontrollers. Key takeaways from this project include:
 
 **Bit-Accurate Feature Extraction**: By using the CMSIS-DSP library on both PC (via Python wrapper) and MCU (C++), we ensured that the input to the neural network was consistent across environments.
 
