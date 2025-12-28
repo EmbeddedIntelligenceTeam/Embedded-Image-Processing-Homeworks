@@ -67,6 +67,8 @@ converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 ```
 
+*After running this code, the C files are downloaded to the PC, and these downloaded C files are imported into the Cube IDE project as header and source files.*
+
 ---
 
 ## 4. Hardware Implementation (STM32 CubeIDE)
