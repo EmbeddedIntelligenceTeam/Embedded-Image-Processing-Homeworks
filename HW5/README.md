@@ -413,3 +413,12 @@ MCU OUTPUT:
 
 **System Latency**: The high UART baud rate of 2,000,000 bps allows for near-instantaneous feedback between the device recording and the PC display.
 
+## 6.3 Conclusion
+
+The "EOC2 Keyword Spotting" implementation successfully demonstrates the viability of deploying deep learning models on resource-constrained microcontrollers. Key takeaways from this project include:
+
+**Bit-Accurate Feature Extraction**: By using the CMSIS-DSP library on both PC (via Python wrapper) and MCU (C++), we ensured that the input to the neural network was consistent across environments.
+
+**Efficient Inference**: The MLP model, despite having 100-neuron hidden layers, runs efficiently within the STM32's 136 KB Tensor Arena.
+
+**End-to-End Workflow**: We successfully navigated the full pipeline from raw FSDD dataset recordings to real-time embedded classification using TFLite Micro.
