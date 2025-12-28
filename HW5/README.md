@@ -757,6 +757,7 @@ The provided log captures a successful classification event:
 This project successfully demonstrates the deployment of two distinct TinyML applications on the STM32 platform: Keyword Spotting (EOC2) and Handwritten Digit Recognition (EOC3).
 
 **Key Achievements**:
+
 ***Mathematical Parity***: By implementing CMSIS-DSP for MFCC and manual moment calculation logic in C, we achieved nearly identical feature extraction results between Python and the embedded environment.
 
 ***Robust Feature Engineering***: The use of Hu Moments proved to be an excellent choice for embedded vision, providing a rotation and scale-invariant input for the MLP while significantly reducing the computational load.
