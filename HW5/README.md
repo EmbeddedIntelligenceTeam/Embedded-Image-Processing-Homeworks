@@ -220,3 +220,119 @@ TfLiteTensor* output = nullptr;
   }
   /* USER CODE END 3 */
 ```
+
+---
+
+## 5. PC-Side Integration and Verification
+
+The Python integration serves as a verification layer. It mirrors the digital signal processing (DSP) and machine learning (ML) pipeline of the STM32 to ensure that the embedded implementation is accurate.
+
+### 5.1 Python Environment Dependencies
+To achieve bit-accurate results between the PC and the MCU, the following libraries are used:
+* **`cmsisdsp`**: The Python wrapper for the ARM CMSIS-DSP library. This ensures the MFCC extraction on the PC uses the exact same mathematical algorithms as the microcontroller.
+* **`tensorflow`**: Used to run the `.tflite` model via the `Interpreter` for desktop-side inference.
+* **`scipy`**: Handles signal processing (windowing) and audio file operations.
+* **`py_serial`**: A custom wrapper for `pyserial` used to synchronize communication with the STM32 via a defined request/response protocol.
+
+### 5.2 MFCC Implementation on PC
+The `py_mfcc.py` script initializes the CMSIS-DSP MFCC instance. It utilizes the `arm_mfcc_init_f32` and `arm_mfcc_f32` functions to process raw 8kHz audio into 26 features (two windows of 13 DCT outputs).
+
+
+
+### 5.3 Communication Protocol and Workflow
+The PC script operates in a polling loop, waiting for the STM32 to transmit data. The synchronization follows these steps:
+
+1. **Header Synchronization**: The PC waits for a request type from the MCU (`SERIAL_PollForRequest`).
+2. **Audio Reception**: When the MCU sends raw audio (`MCU_WRITES`), the PC reads the buffer and reconstructs the signal.
+3. **PC Feature Extraction**: The received raw audio is processed through the Python `cmsisdsp` MFCC function to generate a 26-element feature vector.
+4. **PC Inference**: The vector is fed into the `mlp_fsdd_model.tflite` interpreter to calculate probabilities.
+5. **Comparison**: The PC waits for the MCU's own inference results. Once received, it prints both the **PC Output** and **MCU Output** to the terminal for direct comparison.
+
+### 5.4 Main Python Execution Snippet
+The logic below demonstrates the real-time polling and inference loop used for verification:
+
+```python
+# INITIALIZATION
+py_serial.SERIAL_Init("COM5")
+py_mfcc.MFCC_Init(fftSize, sampleRate, numOfMelFilters, numOfDctOutputs, window)
+
+# MAIN VERIFICATION LOOP
+while 1:
+    # 1. Wait for raw audio data from STM32
+    rqType, datalength, dataType = py_serial.SERIAL_PollForRequest()
+    if rqType == py_serial.MCU_WRITES:
+        data = py_serial.SERIAL_Read()
+        
+        # 2. Extract MFCC Features on PC (using CMSIS-DSP)
+        mfccFeatures = py_mfcc.MFCC_Run(data)
+        
+        # 3. Run PC-side TFLite Inference
+        output = list(my_signature(dense_input=mfccFeatures.reshape((1,26)))['dense_2'][0])
+        
+        # 4. Wait for STM32 Inference Results
+        rqType, datalength, dataType = py_serial.SERIAL_PollForRequest()
+        if rqType == py_serial.MCU_WRITES:
+            mcuOutputs = py_serial.SERIAL_Read()
+            
+            # 5. Display Results for Validation
+            print("PC OUTPUT (Probabilities):", output)
+            print("MCU OUTPUT (Probabilities):", mcuOutputs)
+```
+
+```python
+import os
+import numpy as np
+from scipy.io import wavfile
+import cmsisdsp as dsp
+import cmsisdsp.mfcc as mfcc
+from cmsisdsp.datatype import F32
+
+def MFCC_Init(__fftSize, __sampleRate, __numOfMelFilters, __numOfDctOutputs, __window):
+    global fftSize
+    global sampleRate
+    global numOfMelFilters
+    global numOfDctOutputs
+    global window
+    global mfccf32
+
+    fftSize = __fftSize
+    sampleRate = __sampleRate
+    numOfMelFilters = __numOfMelFilters 
+    numOfDctOutputs = __numOfDctOutputs
+    window = __window
+    
+    freq_min = 20
+    freq_high = sampleRate / 2
+    filtLen, filtPos, packedFilters = mfcc.melFilterMatrix(
+        F32, freq_min, freq_high, numOfMelFilters, sampleRate, fftSize
+    )
+
+    dctMatrixFilters = mfcc.dctMatrix(F32, numOfDctOutputs, numOfMelFilters)
+    mfccf32 = dsp.arm_mfcc_instance_f32()
+    status = dsp.arm_mfcc_init_f32(
+        mfccf32,
+        fftSize,
+        numOfMelFilters,
+        numOfDctOutputs,
+        dctMatrixFilters,
+        filtPos,
+        filtLen,
+        packedFilters,
+        window,
+    )
+
+
+def MFCC_Run(sample):
+    sample = sample.astype(np.float32)
+    sample = sample / max(abs(sample))
+    first_half = sample[:fftSize]
+    second_half = sample[fftSize:2*fftSize]
+    tmp = np.zeros(fftSize + 2)
+    mfcc_features = dsp.arm_mfcc_f32(mfccf32, first_half, tmp)
+    mfcc_features_2 = dsp.arm_mfcc_f32(mfccf32, second_half, tmp)
+    mfcc_feature = np.concatenate((mfcc_features, mfcc_features_2))
+        
+    return mfcc_feature
+```
+
+
