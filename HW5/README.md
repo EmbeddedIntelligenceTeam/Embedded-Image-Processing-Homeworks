@@ -1,6 +1,6 @@
 # EE4065 – Embedded Digital Image Processing
 ### **Homework 5**
-**Due Date:** December 26, 2025  
+**Due Date:** January 2, 2026 
 **Team Members:**
 - **Taner KAHYAOĞLU**
 - **Yusuf ZİVAROĞLU**
