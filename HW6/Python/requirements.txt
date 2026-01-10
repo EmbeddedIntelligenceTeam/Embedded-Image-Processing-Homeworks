@@ -1,0 +1,18 @@
+# EE4065 Homework 6 - Python Dependencies
+# CNN-based Handwritten Digit Recognition on STM32
+
+# Core frameworks
+tensorflow>=2.15.0
+numpy>=1.24.0
+
+# Image processing
+opencv-python>=4.9.0
+
+# Serial communication
+pyserial>=3.5
+
+# Visualization
+matplotlib>=3.8.0
+
+# Optional: for Jupyter notebooks
+# jupyter>=1.0.0

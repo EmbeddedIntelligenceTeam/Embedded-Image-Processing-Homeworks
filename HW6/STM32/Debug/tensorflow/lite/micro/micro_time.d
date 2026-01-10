@@ -1,0 +1,4 @@
+tensorflow/lite/micro/micro_time.o: \
+ ../tensorflow/lite/micro/micro_time.cc \
+ C:/Users/fusuy/Desktop/EE4065_HW6_Project/STM32/tensorflow/lite/micro/micro_time.h
+C:/Users/fusuy/Desktop/EE4065_HW6_Project/STM32/tensorflow/lite/micro/micro_time.h:
