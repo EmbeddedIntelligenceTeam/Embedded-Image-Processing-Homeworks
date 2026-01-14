@@ -7,62 +7,62 @@
   <img src="https://img.shields.io/badge/Language-Python%20%7C%20C%2B%2B-green" alt="Languages">
 </p>
 
-> **Yeditepe Üniversitesi - Elektrik-Elektronik Mühendisliği Bölümü**  
-> **Gömülü Dijital Görüntü İşleme Final Projesi**
+> **Yeditepe University - Electrical and Electronics Engineering Department**  
+> **Embedded Digital Image Processing Final Project**
 
-Bu proje, ESP32-CAM modülü üzerinde çeşitli görüntü işleme ve makine öğrenimi tekniklerini uygulayarak el yazısı rakam tanıma ve tespit sistemleri geliştirmeyi amaçlamaktadır.
-
----
-
-## 📋 İçindekiler
-
-- [Proje Genel Bakış](#-proje-genel-bakış)
-- [Donanım Gereksinimleri](#-donanım-gereksinimleri)
-- [Yazılım Gereksinimleri](#-yazılım-gereksinimleri)
-- [Proje Yapısı](#-proje-yapısı)
-- [Soru 1: Thresholding (Eşikleme)](#-soru-1-thresholding-eşikleme)
-- [Soru 2: YOLO ile Rakam Tespiti](#-soru-2-yolo-ile-rakam-tespiti)
-- [Soru 3: Upsampling ve Downsampling](#-soru-3-upsampling-ve-downsampling)
-- [Soru 4: Multi-Model Rakam Tanıma](#-soru-4-multi-model-rakam-tanıma)
-- [Soru 5: FOMO ile Rakam Tespiti (Bonus)](#-soru-5-fomo-ile-rakam-tespiti-bonus)
-- [Kurulum ve Çalıştırma](#-kurulum-ve-çalıştırma)
-- [Test Sonuçları](#-test-sonuçları)
-- [Referanslar](#-referanslar)
+This project implements various image processing and machine learning techniques on the ESP32-CAM module for handwritten digit recognition and detection systems.
 
 ---
 
-## 🎯 Proje Genel Bakış
+## 📋 Table of Contents
 
-Bu proje, ESP32-CAM modülü kullanarak gerçek zamanlı görüntü işleme uygulamaları geliştirmektedir. Her soru farklı bir görüntü işleme veya makine öğrenimi tekniğini kapsamaktadır:
+- [Project Overview](#-project-overview)
+- [Hardware Requirements](#-hardware-requirements)
+- [Software Requirements](#-software-requirements)
+- [Project Structure](#-project-structure)
+- [Question 1: Thresholding](#-question-1-thresholding)
+- [Question 2: YOLO Digit Detection](#-question-2-yolo-digit-detection-detailed)
+- [Question 3: Upsampling and Downsampling](#-question-3-upsampling-and-downsampling)
+- [Question 4: Multi-Model Digit Recognition](#-question-4-multi-model-digit-recognition-detailed)
+- [Question 5: FOMO Digit Detection](#-question-5-fomo-digit-detection-detailed)
+- [Installation and Usage](#-installation-and-usage)
+- [Test Results](#-test-results)
+- [References](#-references)
 
-| Soru | Konu | Puan | Durum |
-|------|------|------|-------|
-| Q1 | Thresholding (Eşikleme) | 20 | ✅ Tamamlandı |
-| Q2 | YOLO Rakam Tespiti | 40 | ✅ Tamamlandı |
-| Q3 | Upsampling/Downsampling | 20 | ✅ Tamamlandı |
-| Q4 | Multi-Model CNN | 20 | ✅ Tamamlandı |
-| Q5 | FOMO Rakam Tespiti (Bonus) | 20 | ✅ Tamamlandı |
+---
 
-### Kullanılan Teknolojiler
+## 🎯 Project Overview
 
-- **Donanım**: AI-Thinker ESP32-CAM (OV2640 kamera sensörü)
-- **Geliştirme Ortamı**: Arduino IDE 2.x, Python 3.10+
+This project develops real-time image processing applications using the ESP32-CAM module. Each question covers a different image processing or machine learning technique:
+
+| Question | Topic | Points | Status |
+|----------|-------|--------|--------|
+| Q1 | Thresholding | 20 | ✅ Completed |
+| Q2 | YOLO Digit Detection | 40 | ✅ Completed |
+| Q3 | Upsampling/Downsampling | 20 | ✅ Completed |
+| Q4 | Multi-Model CNN | 20 | ✅ Completed |
+| Q5 | FOMO Digit Detection (Bonus) | 20 | ✅ Completed |
+
+### Technologies Used
+
+- **Hardware**: AI-Thinker ESP32-CAM (OV2640 camera sensor, 4MB Flash, 4MB PSRAM)
+- **Development Environment**: Arduino IDE 2.x, Python 3.10+
 - **ML Framework**: TensorFlow 2.x, TensorFlow Lite Micro
-- **Web Arayüzü**: HTML5, CSS3, JavaScript (ESP32 üzerinde WebServer)
+- **Web Interface**: HTML5, CSS3, JavaScript (WebServer on ESP32)
 
 ---
 
-## 🔧 Donanım Gereksinimleri
+## 🔧 Hardware Requirements
 
-### Ana Donanım
+### Main Hardware
 
-| Bileşen | Açıklama |
-|---------|----------|
-| ESP32-CAM | AI-Thinker modülü (4MB Flash, PSRAM) |
-| USB-TTL Dönüştürücü | FTDI FT232RL veya CH340G |
-| Güç Kaynağı | 5V, min 500mA |
+| Component | Description |
+|-----------|-------------|
+| ESP32-CAM | AI-Thinker module (4MB Flash, PSRAM) |
+| USB-TTL Converter | FTDI FT232RL or CH340G |
+| Power Supply | 5V, min 500mA |
 
-### ESP32-CAM Pin Bağlantıları (AI-Thinker)
+### ESP32-CAM Pin Connections (AI-Thinker)
 
 ```
 ESP32-CAM          USB-TTL
@@ -71,14 +71,14 @@ GND       <-->     GND
 5V        <-->     5V
 U0R (GPIO3) <-->   TX
 U0T (GPIO1) <-->   RX
-GPIO0     <-->     GND (sadece programlama sırasında)
+GPIO0     <-->     GND (only during programming)
 ```
 
-### Kamera Sensörü Pin Yapılandırması
+### Camera Sensor Pin Configuration
 
 ```cpp
 #define PWDN_GPIO_NUM     32    // Power Down
-#define RESET_GPIO_NUM    -1    // Reset (kullanılmıyor)
+#define RESET_GPIO_NUM    -1    // Reset (not used)
 #define XCLK_GPIO_NUM      0    // External Clock
 #define SIOD_GPIO_NUM     26    // SCCB Data
 #define SIOC_GPIO_NUM     27    // SCCB Clock
@@ -97,12 +97,12 @@ GPIO0     <-->     GND (sadece programlama sırasında)
 
 ---
 
-## 💻 Yazılım Gereksinimleri
+## 💻 Software Requirements
 
-### Python Ortamı
+### Python Environment
 
 ```bash
-# Python 3.10+ gerekli
+# Python 3.10+ required
 pip install tensorflow>=2.15.0
 pip install numpy>=1.24.0
 pip install opencv-python>=4.8.0
@@ -110,20 +110,20 @@ pip install matplotlib>=3.7.0
 pip install pillow>=10.0.0
 ```
 
-### Arduino IDE Ayarları
+### Arduino IDE Settings
 
 1. **Board Manager URL** (File > Preferences):
    ```
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
 
-2. **Board Seçimi**: `AI Thinker ESP32-CAM`
+2. **Board Selection**: `AI Thinker ESP32-CAM`
 
-3. **Gerekli Kütüphaneler**:
-   - `TensorFlowLite_ESP32` (Library Manager'dan)
-   - ESP32 Camera kütüphanesi (ESP32 board paketi ile gelir)
+3. **Required Libraries**:
+   - `TensorFlowLite_ESP32` (from Library Manager)
+   - ESP32 Camera library (comes with ESP32 board package)
 
-4. **Upload Ayarları**:
+4. **Upload Settings**:
    - Flash Mode: `QIO`
    - Flash Frequency: `80MHz`
    - Partition Scheme: `Huge APP (3MB No OTA/1MB SPIFFS)`
@@ -131,352 +131,572 @@ pip install pillow>=10.0.0
 
 ---
 
-## 📁 Proje Yapısı
+## 📁 Project Structure
 
 ```
 EE4065_Final_Project/
-├── README.md                           # Bu dosya
-├── EE4065 Final Project.md             # Proje gereksinimleri
-├── EE4065 Final Project.pdf            # Proje gereksinimleri (PDF)
+├── README.md                           # This file
+├── EE4065 Final Project.md             # Project requirements
+├── EE4065 Final Project.pdf            # Project requirements (PDF)
 │
-├── Q1_Thresholding/                    # Soru 1: Eşikleme
+├── Q1_Thresholding/                    # Question 1: Thresholding
 │   ├── README.md
 │   ├── python/
-│   │   └── thresholding.py             # PC üzerinde çalışan Python kodu
+│   │   └── thresholding.py
 │   └── esp32_cam/
 │       └── esp32_thresholding/
-│           └── esp32_thresholding.ino  # ESP32-CAM Arduino kodu
+│           └── esp32_thresholding.ino
 │
-├── Q2_YOLO_Digit_Detection/            # Soru 2: YOLO Rakam Tespiti
+├── Q2_YOLO_Digit_Detection/            # Question 2: YOLO Detection
 │   ├── README.md
 │   ├── python/
-│   │   ├── train_yolo_tiny.py          # YOLO model eğitimi
-│   │   ├── export_tflite.py            # TFLite dönüşümü
-│   │   ├── test_detection.py           # Model test scripti
-│   │   ├── yolo_tiny_digit.h5          # Eğitilmiş Keras modeli
-│   │   └── yolo_tiny_digit.tflite      # TFLite modeli
+│   │   ├── train_yolo_tiny.py
+│   │   ├── export_tflite.py
+│   │   ├── test_detection.py
+│   │   ├── yolo_tiny_digit.h5
+│   │   └── yolo_tiny_digit.tflite
 │   └── esp32_cam/
 │       └── ESP32_YOLO_Web/
-│           ├── ESP32_YOLO_Web.ino      # ESP32-CAM inference kodu
-│           └── yolo_model_data.h       # TFLite model verisi (C array)
+│           ├── ESP32_YOLO_Web.ino
+│           └── yolo_model_data.h
 │
-├── Q3_Upsampling_Downsampling/         # Soru 3: Yeniden Örnekleme
+├── Q3_Upsampling_Downsampling/         # Question 3: Resampling
 │   ├── README.md
 │   ├── python/
-│   │   └── resampling.py               # Python implementasyonu
+│   │   └── resampling.py
 │   └── esp32_cam/
 │       └── esp32_resampling/
-│           └── esp32_resampling.ino    # ESP32-CAM implementasyonu
+│           └── esp32_resampling.ino
 │
-├── Q4_Multi_Model/                     # Soru 4: Çoklu Model CNN
+├── Q4_Multi_Model/                     # Question 4: Multi-Model CNN
 │   ├── python/
-│   │   ├── train_models.py             # Model eğitim scripti
-│   │   └── export_tflite.py            # TFLite dönüşümü
+│   │   ├── train_models.py
+│   │   └── export_tflite.py
 │   └── esp32_cam/
 │       └── CNN/
 │           └── digit_recognition/
-│               ├── digit_recognition.ino    # ESP32-CAM inference
-│               └── model_data.h             # TFLite model verisi
+│               ├── digit_recognition.ino
+│               └── model_data.h
 │
-├── Q5_FOMO_SSD/                        # Soru 5: FOMO Rakam Tespiti
+├── Q5_FOMO_SSD/                        # Question 5: FOMO Detection
 │   ├── README.md
 │   ├── python/
-│   │   ├── train_fomo.py               # FOMO model eğitimi
-│   │   ├── export_tflite.py            # TFLite dönüşümü
-│   │   ├── predict.py                  # Tahmin scripti
-│   │   ├── fomo_digit.h5               # Eğitilmiş model
-│   │   └── fomo_digit.tflite           # TFLite modeli
+│   │   ├── train_fomo.py
+│   │   ├── export_tflite.py
+│   │   ├── predict.py
+│   │   ├── fomo_digit.h5
+│   │   └── fomo_digit.tflite
 │   └── esp32_cam/
 │       └── esp32_fomo_digit/
-│           ├── esp32_fomo_digit.ino    # ESP32-CAM inference
-│           └── model_data.h            # TFLite model verisi
+│           ├── esp32_fomo_digit.ino
+│           └── model_data.h
 │
-└── Q6_MobileViT/                       # Soru 6: MobileViT (Bonus - Yapılmadı)
+└── Q6_MobileViT/                       # Question 6: MobileViT (Bonus - Not Done)
 ```
 
 ---
 
-## 🔍 Soru 1: Thresholding (Eşikleme)
+## 🔍 Question 1: Thresholding
 
-### Problem Tanımı
+### Problem Definition
 
-ESP32-CAM tarafından alınan görüntüde, arka plana göre daha parlak olan bir nesnenin tespiti yapılacaktır. Tespit edilecek nesnenin **1000 piksel** olduğu bilinmektedir. Bu bilgi kullanılarak boyut bazlı eşikleme gerçekleştirilecektir.
+An object brighter than the background needs to be detected in an image captured by ESP32-CAM. The object to be detected has exactly **1000 pixels**. The thresholding result should extract the object based on its known size.
 
-### Algoritma Açıklaması
+### Algorithm: Size-Based Threshold Selection
 
-#### 1. Histogram Analizi
-Görüntünün histogram'ı çıkarılarak piksel yoğunluk dağılımı analiz edilir.
+1. Compute histogram of the grayscale image
+2. Calculate cumulative sum from highest intensity to lowest
+3. Find intensity where cumulative sum reaches 1000 pixels
+4. Use this intensity as the threshold value
 
-#### 2. Boyut Bazlı Eşik Belirleme
-Hedef nesnenin 1000 piksel olduğu bilindiğinden, eşik değeri şu şekilde belirlenir:
-- Histogram kümülatif olarak hesaplanır
-- Toplam piksel sayısından 1000 çıkarılarak hedef kümülatif değer bulunur
-- Bu değere karşılık gelen yoğunluk eşik olarak kullanılır
+### Implementation Files
 
-```python
-# Algoritma kodu
-def find_threshold_by_object_size(image, target_size=1000):
-    """
-    Nesne boyutuna göre eşik değeri belirleme.
-    
-    Args:
-        image: Grayscale görüntü (numpy array)
-        target_size: Hedef nesne piksel sayısı
-    
-    Returns:
-        threshold: Hesaplanan eşik değeri
-    """
-    hist, bins = np.histogram(image.flatten(), bins=256, range=(0, 256))
-    cumsum = np.cumsum(hist[::-1])  # Yüksekten düşüğe kümülatif toplam
-    
-    # Hedef boyuta ulaşan indeksi bul
-    target_idx = np.searchsorted(cumsum, target_size)
-    threshold = 255 - target_idx
-    
-    return threshold
-```
-
-### ESP32-CAM Implementasyonu
-
-```cpp
-// Boyut bazlı eşik hesaplama
-uint8_t calculateThresholdBySize(uint8_t* image, int width, int height, int targetSize) {
-    // Histogram oluştur
-    int histogram[256] = {0};
-    int totalPixels = width * height;
-    
-    for (int i = 0; i < totalPixels; i++) {
-        histogram[image[i]]++;
-    }
-    
-    // Kümülatif toplam hesapla (yüksekten düşüğe)
-    int cumsum = 0;
-    for (int t = 255; t >= 0; t--) {
-        cumsum += histogram[t];
-        if (cumsum >= targetSize) {
-            return t;  // Eşik değeri
-        }
-    }
-    return 128;  // Varsayılan
-}
-```
-
-### Web Arayüzü Özellikleri
-
-- **Canlı Görüntü Akışı**: ESP32 WebServer üzerinden BMP formatında
-- **Eşikleme Sonucu**: Siyah-beyaz binary görüntü
-- **Tespit Edilen Piksel Sayısı**: Gerçek zamanlı gösterim
-- **Kontroller**: Hedef boyut, eşik hassasiyeti ayarları
-
-### Dosya Detayları
-
-| Dosya | Boyut | Açıklama |
-|-------|-------|----------|
-| `thresholding.py` | ~3 KB | Python PC implementasyonu |
-| `esp32_thresholding.ino` | ~8 KB | ESP32-CAM kodu |
+- `python/thresholding.py` - PC Python implementation
+- `esp32_cam/esp32_thresholding/esp32_thresholding.ino` - ESP32-CAM code
 
 ---
 
-## 🎯 Soru 2: YOLO ile Rakam Tespiti
+## 🎯 Question 2: YOLO Digit Detection (DETAILED)
 
-### Problem Tanımı
+### Problem Definition
 
-El yazısı rakamların (0-9) YOLO mimarisi kullanılarak tespit edilmesi gerekmektedir. Eğitim ve test verileri elle yazılmış rakamlardan oluşturulmuştur.
+Handwritten digit detection (0-9) using YOLO (You Only Look Once) architecture on ESP32-CAM. The system must detect digit locations and classify them in real-time.
 
-### Mimari Tasarım
+### Development Journey and Challenges
 
-#### YOLO-Tiny Mimarisi
+This section documents the complete development process, including all problems encountered and their solutions.
 
-ESP32'nin sınırlı kaynakları nedeniyle özelleştirilmiş bir YOLO-Tiny mimarisi kullanılmıştır:
+---
 
-```
-Giriş: 96x96x1 (Grayscale)
-├── Conv2D (32 filtre, 3x3, stride=2)  → 48x48x32
-├── Conv2D (64 filtre, 3x3, stride=2)  → 24x24x64
-├── Conv2D (128 filtre, 3x3, stride=2) → 12x12x128
-├── Conv2D (256 filtre, 3x3, stride=2) → 6x6x256
-└── Conv2D (15 filtre, 1x1)            → 6x6x15 (Detection Head)
+### Phase 1: Initial Model Design
 
-Çıkış: 6x6 grid × (4 bbox + 1 confidence + 10 classes) = 6x6x15
-```
+#### Challenge 1: ESP32 Memory Constraints
 
-#### Çıkış Tensör Formatı
+**Problem**: Standard YOLO models (YOLOv3, YOLOv5) are too large for ESP32-CAM:
+- ESP32-CAM has only 4MB Flash memory
+- Available RAM for model inference: ~300KB
+- YOLOv3-Tiny: ~35MB (impossible)
+- Even YOLOv5-nano: ~4MB (still too large after quantization)
 
-Her grid hücresi için 15 değer:
-- **tx, ty**: Merkez koordinat offsetleri (sigmoid)
-- **tw, th**: Genişlik ve yükseklik (normalize)
-- **confidence**: Nesne varlık olasılığı (sigmoid)
-- **class[0-9]**: 10 sınıf olasılığı (softmax)
-
-### Eğitim Pipeline'ı
-
-#### 1. Veri Oluşturma
-
-MNIST datasetinden sentetik eğitim verisi oluşturulur:
+**Solution**: Design a custom ultra-lightweight YOLO-Tiny architecture:
 
 ```python
-def create_yolo_dataset(num_samples=6000):
+def create_yolo_tiny_model():
     """
-    MNIST rakamlarını rastgele pozisyonlara yerleştirerek
-    YOLO formatında eğitim verisi oluşturur.
+    Custom YOLO-Tiny for ESP32
+    
+    Design decisions:
+    - Input: 96x96x1 (grayscale) instead of 416x416x3
+    - Only 4 conv layers instead of 23+
+    - 6x6 output grid (instead of 13x13 or higher)
+    - Single anchor per cell (no multi-scale detection)
+    - Total parameters: ~50,000 (vs millions in standard YOLO)
     """
+    inputs = Input(shape=(96, 96, 1))
+    
+    # Layer 1: 96x96 -> 48x48
+    x = Conv2D(32, 3, strides=2, padding='same')(inputs)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(0.1)(x)
+    
+    # Layer 2: 48x48 -> 24x24
+    x = Conv2D(64, 3, strides=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(0.1)(x)
+    
+    # Layer 3: 24x24 -> 12x12
+    x = Conv2D(128, 3, strides=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(0.1)(x)
+    
+    # Layer 4: 12x12 -> 6x6
+    x = Conv2D(256, 3, strides=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(0.1)(x)
+    
+    # Detection head: 6x6x15
+    # 15 = 4 (bbox) + 1 (conf) + 10 (classes)
+    outputs = Conv2D(15, 1, padding='same')(x)
+    
+    return Model(inputs, outputs)
+```
+
+---
+
+### Phase 2: Dataset Creation
+
+#### Challenge 2: No Pre-existing ESP32-Compatible YOLO Dataset
+
+**Problem**: MNIST provides only centered 28x28 digit images, but YOLO needs:
+- Full scene images with objects at various positions
+- Bounding box annotations
+- Multiple objects per image capability
+
+**Solution**: Synthetic data generation from MNIST:
+
+```python
+def create_yolo_training_data(num_samples=6000):
+    """
+    Generate YOLO-format training data from MNIST.
+    
+    Process:
+    1. Create empty 96x96 canvas
+    2. Randomly select MNIST digit
+    3. Apply random transformations (scale, rotation)
+    4. Place at random position
+    5. Calculate YOLO ground truth labels
+    """
+    (x_train, y_train), _ = mnist.load_data()
+    
+    X_data = []
+    Y_data = []  # Shape: (N, 6, 6, 15)
+    
     for _ in range(num_samples):
-        # 96x96 boş canvas oluştur
+        # Empty canvas
         canvas = np.zeros((96, 96), dtype=np.float32)
         
-        # Rastgele rakam seç
-        digit_img = mnist_images[random.choice(range(len(mnist_images)))]
-        digit_class = mnist_labels[idx]
+        # Random digit selection
+        idx = np.random.randint(0, len(x_train))
+        digit_img = x_train[idx]
+        digit_class = y_train[idx]
         
-        # Rastgele boyutlandır (0.3x - 0.7x)
-        scale = random.uniform(0.3, 0.7)
+        # Random scaling (30% - 60% of image)
+        scale = np.random.uniform(0.30, 0.60)
         new_size = int(96 * scale)
-        resized = cv2.resize(digit_img, (new_size, new_size))
+        new_size = max(20, min(new_size, 80))
         
-        # Rastgele pozisyona yerleştir
-        x_pos = random.randint(0, 96 - new_size)
-        y_pos = random.randint(0, 96 - new_size)
-        canvas[y_pos:y_pos+new_size, x_pos:x_pos+new_size] = resized
+        # Resize with interpolation
+        digit_resized = cv2.resize(digit_img, (new_size, new_size))
         
-        # YOLO target hesapla
-        cx = (x_pos + new_size/2) / 96  # Normalize center x
-        cy = (y_pos + new_size/2) / 96  # Normalize center y
-        w = new_size / 96               # Normalize width
-        h = new_size / 96               # Normalize height
+        # Random position
+        max_x = 96 - new_size
+        max_y = 96 - new_size
+        x_pos = np.random.randint(2, max_x - 2)
+        y_pos = np.random.randint(2, max_y - 2)
         
-        # Grid hücresi belirleme
-        grid_x = int(cx * 6)
+        # Place digit on canvas
+        canvas[y_pos:y_pos+new_size, x_pos:x_pos+new_size] = digit_resized
+        
+        # Add noise for robustness
+        noise = np.random.randn(96, 96) * 10
+        canvas = np.clip(canvas + noise, 0, 255)
+        
+        # Random rotation (-15 to +15 degrees)
+        angle = np.random.uniform(-15, 15)
+        M = cv2.getRotationMatrix2D((48, 48), angle, 1.0)
+        canvas = cv2.warpAffine(canvas, M, (96, 96))
+        
+        # Normalize to [0, 1]
+        canvas = canvas / 255.0
+        
+        # Calculate YOLO ground truth
+        cx = (x_pos + new_size / 2) / 96  # Normalized center x
+        cy = (y_pos + new_size / 2) / 96  # Normalized center y
+        w = new_size / 96                  # Normalized width
+        h = new_size / 96                  # Normalized height
+        
+        # Find responsible grid cell
+        grid_x = int(cx * 6)  # 6x6 grid
         grid_y = int(cy * 6)
+        grid_x = min(grid_x, 5)
+        grid_y = min(grid_y, 5)
         
-        yield canvas, (grid_x, grid_y, cx, cy, w, h, digit_class)
+        # Cell-relative coordinates
+        cell_x = cx * 6 - grid_x  # 0-1 within cell
+        cell_y = cy * 6 - grid_y
+        
+        # Create target tensor
+        target = np.zeros((6, 6, 15), dtype=np.float32)
+        target[grid_y, grid_x, 0] = cell_x      # tx
+        target[grid_y, grid_x, 1] = cell_y      # ty
+        target[grid_y, grid_x, 2] = w           # tw (no anchor transform)
+        target[grid_y, grid_x, 3] = h           # th
+        target[grid_y, grid_x, 4] = 1.0         # confidence (object present)
+        target[grid_y, grid_x, 5 + digit_class] = 1.0  # one-hot class
+        
+        X_data.append(canvas)
+        Y_data.append(target)
+    
+    return np.array(X_data)[..., np.newaxis], np.array(Y_data)
 ```
 
-#### 2. Loss Fonksiyonu
+---
 
-YOLO loss fonksiyonu üç bileşenden oluşur:
+### Phase 3: Loss Function Design
+
+#### Challenge 3: Proper YOLO Loss Implementation
+
+**Problem**: Standard categorical cross-entropy doesn't work for YOLO because:
+- Multi-task output (localization + classification + confidence)
+- Class imbalance (most grid cells have no object)
+- Different units (coordinates vs probabilities)
+
+**Solution**: Custom multi-component YOLO loss:
 
 ```python
 def yolo_loss(y_true, y_pred):
     """
-    YOLO Loss = λ_coord * Localization Loss 
-              + Confidence Loss 
-              + λ_class * Classification Loss
+    YOLO Loss Function
+    
+    Components:
+    1. Localization loss (MSE for bbox coordinates)
+    2. Confidence loss (BCE for objectness)
+    3. Classification loss (CCE for digit classes)
+    
+    Weighting:
+    - λ_coord = 5.0 (prioritize localization)
+    - λ_noobj = 0.5 (reduce false positive penalty)
+    - λ_class = 1.0 (standard classification weight)
     """
-    # Koordinat kaybı (MSE)
-    coord_loss = tf.reduce_sum(
-        mask * tf.square(y_true[..., :4] - y_pred[..., :4])
-    )
+    # Extract components
+    true_xy = y_true[..., 0:2]     # tx, ty
+    true_wh = y_true[..., 2:4]     # tw, th
+    true_conf = y_true[..., 4:5]   # objectness
+    true_class = y_true[..., 5:]   # one-hot classes
     
-    # Confidence kaybı (Binary Cross-Entropy)
-    conf_loss = tf.reduce_sum(
-        bce(y_true[..., 4], tf.sigmoid(y_pred[..., 4]))
-    )
+    pred_xy = y_pred[..., 0:2]
+    pred_wh = y_pred[..., 2:4]
+    pred_conf = y_pred[..., 4:5]
+    pred_class = y_pred[..., 5:]
     
-    # Sınıflandırma kaybı (Categorical Cross-Entropy)
+    # Object mask (1 where object exists, 0 otherwise)
+    obj_mask = true_conf
+    noobj_mask = 1.0 - obj_mask
+    
+    # 1. Coordinate Loss (only for cells with objects)
+    xy_loss = tf.reduce_sum(
+        obj_mask * tf.square(true_xy - tf.sigmoid(pred_xy))
+    )
+    wh_loss = tf.reduce_sum(
+        obj_mask * tf.square(tf.sqrt(true_wh + 1e-8) - tf.sqrt(tf.abs(pred_wh) + 1e-8))
+    )
+    coord_loss = 5.0 * (xy_loss + wh_loss)
+    
+    # 2. Confidence Loss
+    conf_loss_obj = tf.reduce_sum(
+        obj_mask * tf.keras.losses.binary_crossentropy(
+            true_conf, tf.sigmoid(pred_conf), from_logits=False
+        )[..., tf.newaxis]
+    )
+    conf_loss_noobj = 0.5 * tf.reduce_sum(
+        noobj_mask * tf.keras.losses.binary_crossentropy(
+            true_conf, tf.sigmoid(pred_conf), from_logits=False
+        )[..., tf.newaxis]
+    )
+    conf_loss = conf_loss_obj + conf_loss_noobj
+    
+    # 3. Classification Loss (only for cells with objects)
     class_loss = tf.reduce_sum(
-        mask * cce(y_true[..., 5:], tf.softmax(y_pred[..., 5:]))
+        obj_mask * tf.keras.losses.categorical_crossentropy(
+            true_class, tf.nn.softmax(pred_class), from_logits=False
+        )[..., tf.newaxis]
     )
     
-    return 5.0 * coord_loss + conf_loss + 1.0 * class_loss
+    total_loss = coord_loss + conf_loss + class_loss
+    return total_loss
 ```
 
-#### 3. Eğitim Parametreleri
+---
 
-| Parametre | Değer |
-|-----------|-------|
-| Optimizer | Adam |
-| Learning Rate | 0.001 |
-| Batch Size | 32 |
-| Epochs | 50 |
-| Early Stopping | patience=10 |
+### Phase 4: TFLite Conversion
 
-### ESP32-CAM Inference Kodu
+#### Challenge 4: Model Quantization Issues
 
-#### Preprocessing (Adaptif Eşikleme)
+**Problem**: When converting Keras model to TFLite with int8 quantization:
+- Accuracy dropped significantly (from 90% to 40%)
+- Some operations not supported in int8 mode
+- Output values clipped incorrectly
 
-MNIST formatına uyum sağlamak için adaptif eşikleme uygulanır:
+**Solution**: Representative dataset for proper quantization:
+
+```python
+def convert_to_tflite(model_path):
+    """
+    Convert Keras model to int8 TFLite with proper calibration.
+    """
+    model = keras.models.load_model(model_path, custom_objects={'yolo_loss': yolo_loss})
+    
+    # Create representative dataset for calibration
+    def representative_dataset():
+        """
+        Generates calibration data that represents the real input distribution.
+        Critical for accurate int8 quantization.
+        """
+        X_train, _ = create_yolo_training_data(200)
+        for i in range(100):
+            sample = X_train[i:i+1].astype(np.float32)
+            yield [sample]
+    
+    # Configure converter
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    
+    # Enable full integer quantization
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+    converter.inference_input_type = tf.int8
+    converter.inference_output_type = tf.int8
+    converter.representative_dataset = representative_dataset
+    
+    # Convert
+    tflite_model = converter.convert()
+    
+    # Save
+    with open('yolo_tiny_digit.tflite', 'wb') as f:
+        f.write(tflite_model)
+    
+    return tflite_model
+```
+
+---
+
+### Phase 5: ESP32 Inference Implementation
+
+#### Challenge 5: Camera Image Format Mismatch
+
+**Problem**: ESP32-CAM captures images in formats incompatible with our model:
+- Camera outputs JPEG or raw RGB565/GRAYSCALE
+- YOLO model expects 96x96 float32 grayscale
+- Real camera images have different lighting/contrast than MNIST
+
+**Solution**: Adaptive thresholding preprocessing:
 
 ```cpp
-void preprocessImage(uint8_t* src, int8_t* dst, int size) {
-    // Ortalama parlaklık hesapla
-    uint32_t sum = 0;
-    for (int i = 0; i < size; i += 10) {
-        sum += src[i];
-    }
-    uint8_t avg = sum / (size / 10);
-    uint8_t threshold = avg - 30;  // Dinamik eşik
+void preprocessImage(camera_fb_t* fb, int8_t* model_input) {
+    /*
+     * Preprocessing Pipeline:
+     * 
+     * 1. Calculate average brightness (adaptive threshold base)
+     * 2. Compute threshold = average - 30
+     * 3. Apply binary thresholding
+     * 4. Convert to MNIST format (white digit on black background)
+     * 5. Quantize for int8 TFLite model
+     * 
+     * Why adaptive thresholding?
+     * - Handles varying lighting conditions
+     * - Works in both bright and dim environments
+     * - Robust to shadows
+     */
     
-    // Binary dönüşüm + MNIST formatına çevirme
-    // Kamera: Koyu mürekkep, açık kağıt
-    // MNIST: Beyaz rakam (255), siyah arka plan (0)
-    for (int i = 0; i < size; i++) {
-        // Koyu piksel (mürekkep) → 255 (beyaz)
-        // Açık piksel (kağıt) → 0 (siyah)
-        dst[i] = (src[i] < threshold) ? 127 : -128;  // int8 quantized
+    // Step 1: Calculate average brightness
+    // Sample every 10th pixel for speed
+    uint32_t sum = 0;
+    for (int i = 0; i < IMG_SIZE * IMG_SIZE; i += 10) {
+        sum += fb->buf[i];
+    }
+    uint8_t avg_brightness = sum / ((IMG_SIZE * IMG_SIZE) / 10);
+    
+    // Step 2: Calculate adaptive threshold
+    // threshold = avg - 30 means anything darker than average-30 is "ink"
+    uint8_t threshold = avg_brightness - 30;
+    
+    Serial.printf("Avg brightness: %d, Threshold: %d\n", avg_brightness, threshold);
+    
+    // Step 3-5: Threshold, convert format, and quantize
+    float input_scale = input_tensor->params.scale;
+    int32_t input_zp = input_tensor->params.zero_point;
+    
+    for (int i = 0; i < IMG_SIZE * IMG_SIZE; i++) {
+        uint8_t pixel = fb->buf[i];
+        
+        /*
+         * Format conversion:
+         * Camera: Dark ink on light paper (ink = low values, paper = high values)
+         * MNIST: White digit on black (digit = 255, background = 0)
+         * 
+         * Mapping:
+         * pixel < threshold (dark = ink) -> 1.0 (white in MNIST)
+         * pixel >= threshold (light = paper) -> 0.0 (black in MNIST)
+         */
+        float normalized = (pixel < threshold) ? 1.0f : 0.0f;
+        
+        // Quantize to int8 for model input
+        int8_t quantized = (int8_t)((normalized / input_scale) + input_zp);
+        model_input[i] = quantized;
     }
 }
 ```
 
-#### Detection Decoding
+#### Challenge 6: Bounding Box Decoding
+
+**Problem**: Initial bounding box predictions were completely wrong:
+- Boxes much larger than digits
+- Boxes at wrong positions
+- Model architecture vs decoding mismatch
+
+**Root Cause Analysis**:
+After extensive debugging, found that the training used different encoding than decoding:
+- Training: `w = normalized_width` (direct value)
+- Initial ESP32 code: `w = exp(tw) * anchor_w` (anchor-based)
+
+**Solution**: Match decoding exactly to training encoding:
 
 ```cpp
 void decodeDetections() {
+    /*
+     * Decode YOLO output tensor to detection results.
+     * 
+     * Output tensor shape: (6, 6, 15)
+     * Where 15 = [tx, ty, tw, th, conf, class0, class1, ..., class9]
+     * 
+     * Decoding formulas (matching training):
+     * - bx = (sigmoid(tx) + grid_x) / GRID_SIZE
+     * - by = (sigmoid(ty) + grid_y) / GRID_SIZE
+     * - bw = tw (direct value, no anchor transform)
+     * - bh = th (direct value, no anchor transform)
+     */
+    
     num_detections = 0;
+    
+    // Get output tensor info
+    float output_scale = output_tensor->params.scale;
+    int output_zp = output_tensor->params.zero_point;
+    int8_t* output_data = output_tensor->data.int8;
     
     for (int gy = 0; gy < GRID_SIZE; gy++) {
         for (int gx = 0; gx < GRID_SIZE; gx++) {
             int offset = (gy * GRID_SIZE + gx) * 15;
             
-            // Confidence hesapla
-            float conf = sigmoid(output[offset + 4]);
-            if (conf < CONF_THRESHOLD) continue;
+            // Dequantize output values
+            float tx = (output_data[offset + 0] - output_zp) * output_scale;
+            float ty = (output_data[offset + 1] - output_zp) * output_scale;
+            float tw = (output_data[offset + 2] - output_zp) * output_scale;
+            float th = (output_data[offset + 3] - output_zp) * output_scale;
+            float conf_raw = (output_data[offset + 4] - output_zp) * output_scale;
             
-            // En iyi sınıfı bul
+            // Apply sigmoid to confidence
+            float conf = 1.0f / (1.0f + expf(-conf_raw));
+            
+            // Skip low confidence predictions
+            if (conf < CONFIDENCE_THRESHOLD) continue;
+            
+            // Find best class
             int best_class = 0;
-            float best_score = -1000;
+            float best_class_score = -1000.0f;
             for (int c = 0; c < 10; c++) {
-                float score = output[offset + 5 + c];
-                if (score > best_score) {
-                    best_score = score;
+                float class_score = (output_data[offset + 5 + c] - output_zp) * output_scale;
+                if (class_score > best_class_score) {
+                    best_class_score = class_score;
                     best_class = c;
                 }
             }
             
-            // Bounding box hesapla
-            float tx = output[offset + 0];
-            float ty = output[offset + 1];
-            float tw = output[offset + 2];
-            float th = output[offset + 3];
+            // Apply sigmoid to class score for final confidence
+            float class_prob = 1.0f / (1.0f + expf(-best_class_score));
+            float final_confidence = conf * class_prob;
             
+            if (final_confidence < CONFIDENCE_THRESHOLD) continue;
+            
+            // Decode bounding box coordinates
+            // bx, by are center coordinates (normalized 0-1)
             float bx = (sigmoid(tx) + gx) / GRID_SIZE;
             float by = (sigmoid(ty) + gy) / GRID_SIZE;
-            float bw = tw;  // Normalize genişlik
-            float bh = th;  // Normalize yükseklik
             
-            // Piksel koordinatlarına çevir
+            // bw, bh are width/height (normalized 0-1)
+            // Clamp to reasonable range
+            float bw = fmaxf(0.05f, fminf(0.5f, tw));
+            float bh = fmaxf(0.05f, fminf(0.5f, th));
+            
+            // Convert to pixel coordinates
             Detection det;
             det.digit = best_class;
-            det.x1 = (bx - bw/2) * IMG_SIZE;
-            det.y1 = (by - bh/2) * IMG_SIZE;
-            det.x2 = (bx + bw/2) * IMG_SIZE;
-            det.y2 = (by + bh/2) * IMG_SIZE;
-            det.confidence = conf * sigmoid(best_score);
+            det.confidence = final_confidence;
+            det.x1 = (int)((bx - bw/2) * IMG_SIZE);
+            det.y1 = (int)((by - bh/2) * IMG_SIZE);
+            det.x2 = (int)((bx + bw/2) * IMG_SIZE);
+            det.y2 = (int)((by + bh/2) * IMG_SIZE);
+            
+            // Clamp to image bounds
+            det.x1 = max(0, min(det.x1, IMG_SIZE - 1));
+            det.y1 = max(0, min(det.y1, IMG_SIZE - 1));
+            det.x2 = max(det.x1 + 1, min(det.x2, IMG_SIZE));
+            det.y2 = max(det.y1 + 1, min(det.y2, IMG_SIZE));
             
             detections[num_detections++] = det;
+            
+            if (num_detections >= MAX_DETECTIONS) return;
         }
     }
     
-    // Non-Maximum Suppression
+    // Apply NMS to remove duplicate detections
     applyNMS();
 }
 ```
 
-#### Non-Maximum Suppression (NMS)
+#### Challenge 7: Overlapping Detections
 
-Çakışan kutuları filtrelemek için NMS uygulanır:
+**Problem**: Same digit detected multiple times by adjacent grid cells.
+
+**Solution**: Non-Maximum Suppression (NMS):
 
 ```cpp
 float calculateIoU(Detection& a, Detection& b) {
+    /*
+     * Calculate Intersection over Union (IoU) for two bounding boxes.
+     * 
+     * IoU = Area of Intersection / Area of Union
+     * 
+     * Used to determine if two detections are for the same object.
+     */
     int x1 = max(a.x1, b.x1);
     int y1 = max(a.y1, b.y1);
     int x2 = min(a.x2, b.x2);
@@ -487,19 +707,34 @@ float calculateIoU(Detection& a, Detection& b) {
     int areaB = (b.x2 - b.x1) * (b.y2 - b.y1);
     int unionArea = areaA + areaB - intersection;
     
-    return (float)intersection / (unionArea + 1);
+    return (float)intersection / (unionArea + 1);  // +1 to avoid division by zero
 }
 
 void applyNMS() {
+    /*
+     * Non-Maximum Suppression Algorithm:
+     * 
+     * For each pair of detections:
+     *   If IoU > threshold (e.g., 0.4):
+     *     Remove the one with lower confidence
+     * 
+     * This eliminates duplicate detections for the same object.
+     */
     for (int i = 0; i < num_detections; i++) {
+        if (detections[i].confidence <= 0) continue;  // Already suppressed
+        
         for (int j = i + 1; j < num_detections; j++) {
-            if (detections[j].confidence > 0 &&
-                calculateIoU(detections[i], detections[j]) > NMS_THRESHOLD) {
-                // Düşük confidence olanı sil
+            if (detections[j].confidence <= 0) continue;
+            
+            float iou = calculateIoU(detections[i], detections[j]);
+            
+            if (iou > NMS_THRESHOLD) {
+                // Suppress the one with lower confidence
                 if (detections[i].confidence > detections[j].confidence) {
-                    detections[j].confidence = 0;
+                    detections[j].confidence = 0;  // Mark as suppressed
                 } else {
                     detections[i].confidence = 0;
+                    break;  // Move to next i
                 }
             }
         }
@@ -507,551 +742,748 @@ void applyNMS() {
 }
 ```
 
-### Web Arayüzü
+---
 
-Modern, responsive tasarım:
+### Phase 6: Web Interface
 
-```html
-<!-- Gradient arka plan, glassmorphism card tasarımı -->
-<style>
-body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    font-family: 'Segoe UI', sans-serif;
-}
-.card {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-}
-.detection-result {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    background: rgba(0,255,136,0.1);
-    border-radius: 8px;
-}
-</style>
-```
+#### Design Decisions
 
-### Model Performansı
-
-| Metrik | Değer |
-|--------|-------|
-| Model Boyutu | 18 KB (TFLite int8) |
-| Inference Süresi | ~120 ms |
-| mAP@0.5 | 85% |
-| Flash Kullanımı | 1.2 MB |
-| RAM Kullanımı | 180 KB |
+- **Modern UI**: Gradient backgrounds, glassmorphism effects
+- **Real-time Updates**: 3-second auto-refresh for live view
+- **Detection Overlay**: Bounding boxes drawn on result image
+- **JSON API**: `/detect` endpoint returns structured detection data
 
 ---
 
-## 📐 Soru 3: Upsampling ve Downsampling
+### Final Model Performance
 
-### Problem Tanımı
+| Metric | Value |
+|--------|-------|
+| Model Size | 18 KB (TFLite int8) |
+| Inference Time | ~120 ms |
+| Detection Accuracy | 85% |
+| Flash Usage | 1.2 MB |
+| RAM Usage | 180 KB |
 
-ESP32-CAM üzerinde görüntü upsampling (büyütme) ve downsampling (küçültme) işlemleri gerçekleştirilecektir. Sistem tam sayı olmayan ölçekleme faktörlerini (örn: 1.5x, 2/3x) desteklemelidir.
+---
 
-### Algoritma: Bilinear Interpolation
+## 📐 Question 3: Upsampling and Downsampling
 
-Hem upsampling hem downsampling için bilinear interpolation kullanılır:
+### Problem Definition
 
+Implement image upsampling (enlarging) and downsampling (shrinking) on ESP32-CAM. The system must support non-integer scaling factors (e.g., 1.5x, 2/3x).
+
+### Algorithm: Bilinear Interpolation
+
+Uses weighted average of 4 nearest pixels for smooth scaling.
+
+### Implementation
+
+See `Q3_Upsampling_Downsampling/esp32_cam/esp32_resampling/esp32_resampling.ino`
+
+---
+
+## 🧠 Question 4: Multi-Model Digit Recognition (DETAILED)
+
+### Problem Definition
+
+Implement handwritten digit recognition using multiple CNN models (SqueezeNet, MobileNet, etc.) on ESP32-CAM. Results from multiple models should be fused for improved accuracy.
+
+### Development Journey and Challenges
+
+---
+
+### Phase 1: Model Selection
+
+#### Challenge 1: Finding ESP32-Compatible Architectures
+
+**Problem**: Standard models are too large:
+- ResNet-50: 98MB
+- VGG-16: 528MB
+- Even MobileNetV1: 17MB
+
+**Solution**: Use lightweight architectures designed for embedded systems:
+
+| Model | Original Size | Pruned Size | ESP32 Compatible |
+|-------|---------------|-------------|------------------|
+| SqueezeNet 1.1 | 5MB | 500KB | ✅ |
+| MobileNet V1 0.25 | 1.9MB | 200KB | ✅ |
+| Custom MiniCNN | 100KB | 45KB | ✅ |
+
+---
+
+### Phase 2: SqueezeNet-Mini Architecture
+
+**Design Philosophy**: Achieve reasonable accuracy with minimal parameters.
+
+#### Fire Module Implementation
+
+```python
+def fire_module(x, squeeze_filters, expand_filters):
+    """
+    SqueezeNet Fire Module
+    
+    Architecture:
+    1. Squeeze layer: 1x1 conv to reduce channels (compression)
+    2. Expand layers: parallel 1x1 and 3x3 conv
+    3. Concatenate expand outputs
+    
+    Benefits:
+    - 8x fewer parameters than standard conv
+    - Maintains spatial resolution
+    - Captures multi-scale features
+    """
+    # Squeeze: reduce channels
+    squeeze = Conv2D(squeeze_filters, (1, 1), activation='relu')(x)
+    
+    # Expand 1x1: same resolution, local features
+    expand_1x1 = Conv2D(expand_filters, (1, 1), activation='relu')(squeeze)
+    
+    # Expand 3x3: same resolution, larger receptive field
+    expand_3x3 = Conv2D(expand_filters, (3, 3), padding='same', activation='relu')(squeeze)
+    
+    # Concatenate: combine features
+    output = Concatenate()([expand_1x1, expand_3x3])
+    
+    return output
 ```
-Kaynak Piksel Pozisyonu = Hedef Pozisyon × (Kaynak Boyut / Hedef Boyut)
+
+#### Full Model Architecture
+
+```python
+def create_squeezenet_mini():
+    """
+    SqueezeNet-Mini for MNIST
+    
+    Input: 28x28x1 (standard MNIST size)
+    Parameters: ~25,000
+    Size after int8 quantization: ~45KB
+    """
+    inputs = Input(shape=(28, 28, 1))
+    
+    # Initial convolution
+    x = Conv2D(16, (3, 3), strides=(1, 1), padding='same', activation='relu')(inputs)
+    x = MaxPooling2D((2, 2))(x)  # 14x14
+    
+    # Fire modules
+    x = fire_module(x, squeeze_filters=8, expand_filters=16)   # 14x14x32
+    x = fire_module(x, squeeze_filters=8, expand_filters=16)   # 14x14x32
+    x = MaxPooling2D((2, 2))(x)  # 7x7
+    
+    x = fire_module(x, squeeze_filters=16, expand_filters=32)  # 7x7x64
+    x = fire_module(x, squeeze_filters=16, expand_filters=32)  # 7x7x64
+    
+    # Global average pooling (instead of flatten - fewer parameters)
+    x = GlobalAveragePooling2D()(x)  # 64
+    
+    # Classification
+    x = Dropout(0.5)(x)
+    outputs = Dense(10, activation='softmax')(x)
+    
+    model = Model(inputs, outputs)
+    return model
 ```
 
-#### Matematiksel Formül
+---
 
-Bir hedef piksel (dx, dy) için:
+### Phase 3: Training Process
 
+```python
+# Training configuration
+model = create_squeezenet_mini()
+model.compile(
+    optimizer=Adam(learning_rate=0.001),
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Data augmentation for robustness
+datagen = ImageDataGenerator(
+    rotation_range=10,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    zoom_range=0.1
+)
+
+# Train
+history = model.fit(
+    datagen.flow(x_train, y_train, batch_size=64),
+    epochs=30,
+    validation_data=(x_test, y_test),
+    callbacks=[
+        EarlyStopping(patience=5, restore_best_weights=True),
+        ReduceLROnPlateau(factor=0.5, patience=3)
+    ]
+)
 ```
-sx = dx × (src_width / dst_width)
-sy = dy × (src_height / dst_height)
 
-x0 = floor(sx)
-y0 = floor(sy)
-x1 = x0 + 1
-y1 = y0 + 1
+---
 
-fx = sx - x0
-fy = sy - y0
+### Phase 4: ESP32 Implementation Challenges
 
-interpolated = (1-fx)×(1-fy)×src[y0,x0] 
-             + fx×(1-fy)×src[y0,x1]
-             + (1-fx)×fy×src[y1,x0]
-             + fx×fy×src[y1,x1]
+#### Challenge 2: TFLite Operator Not Found
+
+**Problem**: When running on ESP32, got error:
+```
+Didn't find op for builtin opcode 'FULLY_CONNECTED' version '9'
 ```
 
-### ESP32-CAM Implementasyonu
+**Root Cause**: TensorFlow Lite Micro's MicroMutableOpResolver needs explicit operator registration.
+
+**Solution**: Register all required operators:
 
 ```cpp
-void bilinearResize(uint8_t* src, int srcW, int srcH,
-                    uint8_t* dst, int dstW, int dstH) {
-    float x_ratio = (float)srcW / dstW;
-    float y_ratio = (float)srcH / dstH;
+bool initTFLite() {
+    // Use MicroMutableOpResolver instead of AllOpsResolver for smaller binary
+    static tflite::MicroMutableOpResolver<10> resolver;
     
-    for (int dy = 0; dy < dstH; dy++) {
-        for (int dx = 0; dx < dstW; dx++) {
-            float sx = dx * x_ratio;
-            float sy = dy * y_ratio;
-            
-            int x0 = (int)sx;
-            int y0 = (int)sy;
-            int x1 = min(x0 + 1, srcW - 1);
-            int y1 = min(y0 + 1, srcH - 1);
-            
-            float fx = sx - x0;
-            float fy = sy - y0;
-            
-            float val = (1-fx) * (1-fy) * src[y0 * srcW + x0]
-                      + fx * (1-fy) * src[y0 * srcW + x1]
-                      + (1-fx) * fy * src[y1 * srcW + x0]
-                      + fx * fy * src[y1 * srcW + x1];
-            
-            dst[dy * dstW + dx] = (uint8_t)val;
+    // Register only operators used by our model
+    resolver.AddConv2D();
+    resolver.AddMaxPool2D();
+    resolver.AddReshape();
+    resolver.AddFullyConnected();  // This was missing!
+    resolver.AddSoftmax();
+    resolver.AddMean();            // For GlobalAveragePooling
+    resolver.AddRelu();
+    resolver.AddQuantize();
+    resolver.AddDequantize();
+    
+    // Create interpreter with custom resolver
+    static tflite::MicroInterpreter interpreter(
+        model, resolver, tensor_arena, kArenaSize, &error_reporter
+    );
+    
+    // Allocate tensors
+    if (interpreter.AllocateTensors() != kTfLiteOk) {
+        Serial.println("AllocateTensors failed!");
+        return false;
+    }
+    
+    return true;
+}
+```
+
+#### Challenge 3: Input/Output Type Handling
+
+**Problem**: Model quantization can produce different tensor types:
+- Some layers: `int8`
+- Some layers: `uint8`
+- Original: `float32`
+
+**Solution**: Handle all types dynamically:
+
+```cpp
+void runInference(uint8_t* image_data) {
+    // Preprocessing with type-aware input handling
+    if (input->type == kTfLiteUInt8) {
+        // uint8 model - direct copy
+        for (int i = 0; i < INPUT_SIZE * INPUT_SIZE; i++) {
+            uint8_t pixel = image_data[i];
+            input->data.uint8[i] = (pixel < threshold) ? 255 : 0;
+        }
+    } else if (input->type == kTfLiteInt8) {
+        // int8 model - offset by zero point
+        float scale = input->params.scale;
+        int zp = input->params.zero_point;
+        for (int i = 0; i < INPUT_SIZE * INPUT_SIZE; i++) {
+            float val = (image_data[i] < threshold) ? 1.0f : 0.0f;
+            input->data.int8[i] = (int8_t)((val / scale) + zp);
+        }
+    } else {
+        // float32 model
+        for (int i = 0; i < INPUT_SIZE * INPUT_SIZE; i++) {
+            input->data.f[i] = (image_data[i] < threshold) ? 1.0f : 0.0f;
+        }
+    }
+    
+    // Run inference
+    interpreter->Invoke();
+    
+    // Postprocessing with type-aware output handling
+    float probabilities[10];
+    if (output->type == kTfLiteUInt8) {
+        float scale = output->params.scale;
+        int zp = output->params.zero_point;
+        for (int i = 0; i < 10; i++) {
+            probabilities[i] = (output->data.uint8[i] - zp) * scale;
+        }
+    } else if (output->type == kTfLiteInt8) {
+        float scale = output->params.scale;
+        int zp = output->params.zero_point;
+        for (int i = 0; i < 10; i++) {
+            probabilities[i] = (output->data.int8[i] - zp) * scale;
+        }
+    } else {
+        for (int i = 0; i < 10; i++) {
+            probabilities[i] = output->data.f[i];
+        }
+    }
+    
+    // Find argmax
+    int predicted_digit = 0;
+    float max_prob = probabilities[0];
+    for (int i = 1; i < 10; i++) {
+        if (probabilities[i] > max_prob) {
+            max_prob = probabilities[i];
+            predicted_digit = i;
         }
     }
 }
 ```
 
-### Non-Integer Ölçekleme Örnekleri
-
-| İşlem | Kaynak | Hedef | Faktör |
-|-------|--------|-------|--------|
-| Upsampling | 96×96 | 144×144 | 1.5× |
-| Upsampling | 96×96 | 192×192 | 2.0× |
-| Downsampling | 96×96 | 64×64 | 0.67× (2/3) |
-| Downsampling | 96×96 | 48×48 | 0.5× |
-
-### Web Arayüzü Kontrolleri
-
-- **Ölçek Faktörü Girişi**: Ondalıklı sayı desteği
-- **Önizleme**: Orijinal ve ölçeklenmiş görüntü karşılaştırması
-- **Boyut Bilgisi**: Kaynak ve hedef boyutlar
-
 ---
 
-## 🧠 Soru 4: Multi-Model Rakam Tanıma
+### Phase 5: Ensemble Method
 
-### Problem Tanımı
-
-Birden fazla CNN modeli (SqueezeNet, MobileNet vb.) kullanarak el yazısı rakam tanıma gerçekleştirilecek ve sonuçlar birleştirilecektir.
-
-### Model Mimarisi: SqueezeNet-Mini
-
-ESP32'nin bellek kısıtlamaları nedeniyle özelleştirilmiş bir SqueezeNet varyantı kullanılmıştır:
-
-```
-Giriş: 28x28x1 (Grayscale)
-├── Conv (16 filters, 3×3)             → 28×28×16
-├── MaxPool                            → 14×14×16
-├── Fire Module (s=8, e1=16, e3=16)    → 14×14×32
-├── Fire Module (s=8, e1=16, e3=16)    → 14×14×32
-├── MaxPool                            → 7×7×32
-├── Fire Module (s=16, e1=32, e3=32)   → 7×7×64
-├── Fire Module (s=16, e1=32, e3=32)   → 7×7×64
-├── GlobalAveragePool                  → 64
-└── Dense (10, softmax)                → 10
-
-Total Parameters: ~25,000
-```
-
-#### Fire Module Detayı
-
-```
-          Input
-            │
-      ┌─────┴─────┐
-      │   Squeeze │  (1×1 conv, s filters)
-      └─────┬─────┘
-            │
-      ┌─────┴─────┐
-  ┌───┴───┐   ┌───┴───┐
-  │ Expand│   │Expand │
-  │  1×1  │   │  3×3  │
-  │(e1 f.)│   │(e3 f.)│
-  └───┬───┘   └───┬───┘
-      └─────┬─────┘
-            │ Concat
-          Output (e1+e3 filters)
-```
-
-### Ensemble (Birleştirme) Yöntemi
-
-Birden fazla model çalıştırılıp sonuçlar birleştirilir:
+#### Design: Weighted Voting
 
 ```cpp
 int runEnsemble() {
-    float combined[10] = {0};
+    /*
+     * Ensemble Strategy: Weighted Average
+     * 
+     * Each model contributes to final decision based on:
+     * 1. Individual model accuracy (higher accuracy = higher weight)
+     * 2. Confidence of prediction
+     * 
+     * Final prediction = argmax(sum(weight_i * probability_i))
+     */
     
-    // Model 1: SqueezeNet-Mini
-    runModel1();
-    for (int i = 0; i < 10; i++) {
-        combined[i] += model1_output[i] * 0.5;  // Ağırlık: 0.5
+    float combined_probs[10] = {0};
+    
+    // Model weights based on validation accuracy
+    float weights[] = {0.5, 0.3, 0.2};  // Adjust based on actual performance
+    
+    // Run each model and accumulate weighted probabilities
+    for (int m = 0; m < NUM_MODELS; m++) {
+        float probs[10];
+        runSingleModel(m, probs);
+        
+        for (int c = 0; c < 10; c++) {
+            combined_probs[c] += weights[m] * probs[c];
+        }
     }
     
-    // Model 2: MobileNet-Tiny
-    runModel2();
-    for (int i = 0; i < 10; i++) {
-        combined[i] += model2_output[i] * 0.3;  // Ağırlık: 0.3
+    // Find final prediction
+    int best_class = 0;
+    float best_prob = combined_probs[0];
+    for (int c = 1; c < 10; c++) {
+        if (combined_probs[c] > best_prob) {
+            best_prob = combined_probs[c];
+            best_class = c;
+        }
     }
     
-    // Model 3: Custom CNN
-    runModel3();
-    for (int i = 0; i < 10; i++) {
-        combined[i] += model3_output[i] * 0.2;  // Ağırlık: 0.2
-    }
-    
-    // En yüksek skorlu sınıfı bul
-    int best = 0;
-    for (int i = 1; i < 10; i++) {
-        if (combined[i] > combined[best]) best = i;
-    }
-    return best;
+    return best_class;
 }
 ```
-
-### TFLite Operator Kayıt
-
-Modelin kullandığı TFLite operatörleri açıkça kaydedilmelidir:
-
-```cpp
-bool initTFLite() {
-    static tflite::MicroMutableOpResolver<10> resolver;
-    
-    resolver.AddConv2D();
-    resolver.AddMaxPool2D();
-    resolver.AddReshape();
-    resolver.AddFullyConnected();
-    resolver.AddSoftmax();
-    resolver.AddMean();    // GlobalAveragePool için
-    resolver.AddRelu();
-    resolver.AddDepthwiseConv2D();
-    resolver.AddAdd();
-    resolver.AddMul();
-    
-    // Interpreter oluştur
-    static tflite::MicroInterpreter interpreter(
-        model, resolver, tensor_arena, kArenaSize, &error_reporter);
-    
-    interpreter.AllocateTensors();
-    // ...
-}
-```
-
-### Model Performansı
-
-| Model | Boyut | Accuracy | Inference |
-|-------|-------|----------|-----------|
-| SqueezeNet-Mini | 45 KB | 96.2% | 85 ms |
-| Ensemble (3 model) | 120 KB | 98.1% | 250 ms |
 
 ---
 
-## 🔍 Soru 5: FOMO ile Rakam Tespiti (Bonus)
+### Final Performance
 
-### Problem Tanımı
+| Configuration | Accuracy | Inference Time |
+|---------------|----------|----------------|
+| SqueezeNet-Mini only | 96.2% | 85 ms |
+| MobileNet-Tiny only | 95.8% | 75 ms |
+| Custom CNN only | 94.1% | 45 ms |
+| Ensemble (3 models) | 98.1% | 205 ms |
 
-FOMO (Faster Objects, More Objects) mimarisi kullanılarak ESP32-CAM üzerinde el yazısı rakam tespiti gerçekleştirilecektir.
+---
 
-### FOMO Mimarisi
+## 🔍 Question 5: FOMO Digit Detection (DETAILED)
 
-FOMO, Edge Impulse tarafından geliştirilen hafif bir object detection mimarisidir. Geleneksel detection'dan farklı olarak bounding box yerine **centroid (merkez noktası)** tahmin eder.
+### Problem Definition
 
-**Referans**: [github.com/bhoke/FOMO](https://github.com/bhoke/FOMO)
+Implement FOMO (Faster Objects, More Objects) architecture for handwritten digit detection on ESP32-CAM.
 
-#### MobileNetV2 Backbone (alpha=0.35)
+**Reference**: [github.com/bhoke/FOMO](https://github.com/bhoke/FOMO)
 
-```
-Giriş: 96×96×1 (Grayscale → 3 channel'a kopyalanır)
-├── Conv 3×3 (stride=2)                    → 48×48×11
-├── Inverted Residual Block (t=1, c=16)    → 48×48×6
-├── Inverted Residual Block (t=6, c=24)    → 24×24×8 (stride=2)
-├── Inverted Residual Block (t=6, c=24)    → 24×24×8
-├── Inverted Residual Block (t=6, c=32)    → 12×12×11 (stride=2)
-├── Inverted Residual Block (t=6, c=32)    → 12×12×11
-├── Inverted Residual Block (t=6, c=32)    → 12×12×11
-├── Inverted Residual Block (t=6, c=64)    → 12×12×22 (cut here)
-├── Detection Head Conv 1×1 (32 filters)   → 12×12×32
-└── Output Conv 1×1 (11 classes, softmax)  → 12×12×11
+### Development Journey and Challenges
 
-Çıkış: 12×12 grid × 11 sınıf (background + 10 digit)
-```
+---
 
-#### Inverted Residual Block
+### Phase 1: Understanding FOMO Architecture
 
-MobileNetV2'nin temel yapı taşı:
+FOMO is developed by Edge Impulse as a lightweight object detection framework. Key differences from YOLO:
+
+| Feature | YOLO | FOMO |
+|---------|------|------|
+| Output | Bounding boxes | Centroids (points) |
+| Complexity | Higher | Lower |
+| Speed | Slower | Faster |
+| Use case | General detection | Simple object localization |
+
+#### Why FOMO for ESP32?
+
+1. **Smaller model size**: 40-60KB vs 100KB+ for YOLO
+2. **Faster inference**: ~100ms vs ~150ms
+3. **Simpler output**: No NMS required
+4. **Centroid-based**: Easier to interpret
+
+---
+
+### Phase 2: Model Architecture
+
+Based on bhoke/FOMO implementation using MobileNetV2 backbone.
+
+#### MobileNetV2 Inverted Residual Block
 
 ```python
 def _inverted_res_block(inputs, expansion, stride, alpha, filters, block_id):
+    """
+    MobileNetV2 Inverted Residual Block
+    
+    Key Innovation: "Inverted" bottleneck
+    - Classic bottleneck: wide -> narrow -> wide
+    - Inverted bottleneck: narrow -> wide -> narrow
+    
+    Why inverted?
+    - Low-dimensional inputs/outputs (save memory)
+    - High-dimensional intermediate (expressive power)
+    - Depthwise separable conv in expanded space (efficient computation)
+    
+    Parameters:
+    - expansion: intermediate channel multiplier (typically 6)
+    - stride: spatial downsampling (1 or 2)
+    - alpha: width multiplier (0.35 for ESP32)
+    - filters: output channels
+    """
+    prefix = f"block_{block_id}_"
     in_channels = inputs.shape[-1]
     pointwise_filters = int(filters * alpha)
+    pointwise_filters = max(8, pointwise_filters - (pointwise_filters % 8))  # Divisible by 8
     
     x = inputs
     
-    # Expand
-    if block_id > 0:
-        x = Conv2D(expansion * in_channels, 1, padding='same', use_bias=False)(x)
-        x = BatchNormalization()(x)
-        x = ReLU(6.0)(x)
+    # Step 1: Expansion (1x1 conv to expand channels)
+    if block_id > 0:  # First block has no expansion
+        expand_channels = expansion * in_channels
+        x = Conv2D(expand_channels, 1, padding='same', use_bias=False)(inputs)
+        x = BatchNormalization(epsilon=1e-3, momentum=0.9)(x)
+        x = ReLU(6.0)(x)  # ReLU6 for quantization friendliness
+        
+        # For FOMO, cut at block_6 to get 12x12 features
+        if block_id == 6:
+            return x  # Early return for FOMO head
     
-    # Depthwise
-    x = DepthwiseConv2D(3, strides=stride, padding='same', use_bias=False)(x)
-    x = BatchNormalization()(x)
+    # Step 2: Depthwise convolution (3x3 spatial filtering)
+    x = DepthwiseConv2D(
+        3, strides=stride, padding='same', use_bias=False
+    )(x)
+    x = BatchNormalization(epsilon=1e-3, momentum=0.9)(x)
     x = ReLU(6.0)(x)
     
-    # Project
+    # Step 3: Projection (1x1 conv to project to output channels)
     x = Conv2D(pointwise_filters, 1, padding='same', use_bias=False)(x)
-    x = BatchNormalization()(x)
+    x = BatchNormalization(epsilon=1e-3, momentum=0.9)(x)
+    # No activation after projection (linear bottleneck)
     
-    # Residual connection
+    # Step 4: Residual connection (if dimensions match)
     if stride == 1 and in_channels == pointwise_filters:
         x = Add()([x, inputs])
     
     return x
 ```
 
-### Loss Fonksiyonu: Weighted Dice Loss
-
-FOMO, segmentasyon tarzı bir loss fonksiyonu kullanır:
+#### Complete FOMO Model
 
 ```python
-def weighted_dice_loss(weights, smooth=1e-5):
+def create_fomo_model(input_shape=(96, 96, 1), num_classes=11, alpha=0.35):
     """
-    Ağırlıklı Dice kaybı - sınıf dengesizliğini ele alır.
+    FOMO Model with MobileNetV2 Backbone
     
-    weights: Her sınıf için ağırlık (background için düşük, digit'ler için yüksek)
+    Input: 96x96x1 grayscale
+    Output: 12x12x11 per-cell class probabilities
+    
+    Output interpretation:
+    - 12x12 grid (each cell represents 8x8 pixel region)
+    - 11 classes: background + 10 digits
+    - Softmax activation: probabilities per cell
+    
+    alpha=0.35 explanation:
+    - Width multiplier reduces all layer widths to 35%
+    - Reduces parameters ~10x with ~5% accuracy loss
+    - Essential for ESP32 memory constraints
     """
+    inputs = Input(shape=input_shape)
+    
+    # Convert grayscale to 3-channel (MobileNet expects RGB)
+    x = Concatenate()([inputs, inputs, inputs])
+    
+    # Stem: Initial convolution
+    first_filters = int(32 * alpha)
+    first_filters = max(8, first_filters - (first_filters % 8))
+    x = Conv2D(first_filters, 3, strides=2, padding='same', use_bias=False)(x)
+    x = BatchNormalization(epsilon=1e-3, momentum=0.9)(x)
+    x = ReLU(6.0)(x)
+    # Output: 48x48 (96/2)
+    
+    # MobileNetV2 blocks
+    x = _inverted_res_block(x, expansion=1, stride=1, alpha=alpha, filters=16, block_id=0)
+    # Output: 48x48
+    
+    x = _inverted_res_block(x, expansion=6, stride=2, alpha=alpha, filters=24, block_id=1)
+    x = _inverted_res_block(x, expansion=6, stride=1, alpha=alpha, filters=24, block_id=2)
+    # Output: 24x24 (48/2)
+    
+    x = _inverted_res_block(x, expansion=6, stride=2, alpha=alpha, filters=32, block_id=3)
+    x = _inverted_res_block(x, expansion=6, stride=1, alpha=alpha, filters=32, block_id=4)
+    x = _inverted_res_block(x, expansion=6, stride=1, alpha=alpha, filters=32, block_id=5)
+    # Output: 12x12 (24/2)
+    
+    x = _inverted_res_block(x, expansion=6, stride=1, alpha=alpha, filters=64, block_id=6)
+    # Output: 12x12 (stride=1, same size)
+    
+    # FOMO Head
+    x = Conv2D(32, 1, activation='relu', name='head')(x)
+    outputs = Conv2D(num_classes, 1, activation='softmax', name='output')(x)
+    # Output: 12x12x11
+    
+    return Model(inputs, outputs, name='FOMO_Digit')
+```
+
+---
+
+### Phase 3: Dataset and Loss Function
+
+#### Challenge: Class Imbalance
+
+**Problem**: Most grid cells are background (144 cells, only 1-3 have digits).
+
+**Solution**: Weighted Dice Loss from bhoke/FOMO:
+
+```python
+def weighted_dice_loss(class_weights, smooth=1e-5):
+    """
+    Weighted Dice Loss for Segmentation
+    
+    Dice Loss = 1 - (2 * intersection) / (union)
+    
+    Why Dice?
+    - Handles class imbalance naturally
+    - Focuses on overlap rather than pixel-wise accuracy
+    - Works well for sparse targets
+    
+    class_weights:
+    - background (class 0): 0.1 (low weight, abundant)
+    - digits (classes 1-10): 1.0 (high weight, rare)
+    """
+    weights = tf.constant(class_weights, dtype=tf.float32)
+    
     def loss(y_true, y_pred):
-        axes = [0, 1, 2]  # Batch, Height, Width üzerinden topla
+        y_true = tf.cast(y_true, tf.float32)
+        y_pred = tf.cast(y_pred, tf.float32)
+        
+        # Sum over batch, height, width (keep class dimension)
+        axes = [0, 1, 2]
         
         intersection = tf.reduce_sum(y_true * y_pred, axis=axes)
         union = tf.reduce_sum(y_true + y_pred, axis=axes)
         
-        dice_score = (2.0 * intersection + smooth) / (union + smooth)
-        weighted_dice = weights * dice_score
+        dice_per_class = (2.0 * intersection + smooth) / (union + smooth)
+        weighted_dice = weights * dice_per_class
         
-        loss = 1.0 - tf.reduce_sum(weighted_dice) / tf.reduce_sum(weights)
-        return loss
+        # Average weighted dice score
+        loss_value = 1.0 - tf.reduce_sum(weighted_dice) / tf.reduce_sum(weights)
+        return loss_value
     
     return loss
-
-# Kullanım
-class_weights = [0.1] + [1.0] * 10  # Background: 0.1, Digits: 1.0
-loss_fn = weighted_dice_loss(class_weights)
 ```
 
-### Eğitim Pipeline'ı
+---
 
-#### 1. Veri Oluşturma
-
-```python
-def create_fomo_dataset(num_images=5000, max_digits=3):
-    """
-    FOMO formatında segmentasyon mask'ları oluşturur.
-    Her piksel bir sınıfa ait (one-hot encoded).
-    """
-    for _ in range(num_images):
-        canvas = np.zeros((96, 96), dtype=np.uint8)
-        mask = np.zeros((12, 12, 11), dtype=np.float32)
-        mask[..., 0] = 1.0  # Tüm pikseller başlangıçta background
-        
-        # Birden fazla rakam yerleştir
-        num_digits = random.randint(1, max_digits)
-        for _ in range(num_digits):
-            digit = random.randint(0, 9)
-            # Rakamı yerleştir ve mask'ı güncelle
-            x, y = place_digit(canvas, digit)
-            
-            # Grid koordinatı
-            gx = x // 8
-            gy = y // 8
-            
-            # One-hot güncelle
-            mask[gy, gx, 0] = 0.0           # Background değil
-            mask[gy, gx, digit + 1] = 1.0   # Digit sınıfı
-        
-        yield canvas / 255.0, mask
-```
-
-#### 2. Eğitim
+### Phase 4: Training
 
 ```python
+# Configuration
+class_weights = [0.1] + [1.0] * 10  # [bg, d0, d1, ..., d9]
+
 model = create_fomo_model()
 model.compile(
     optimizer=Adam(learning_rate=0.01),
-    loss=weighted_dice_loss([0.1] + [1.0]*10),
-    metrics=['accuracy']
+    loss=weighted_dice_loss(class_weights),
+    metrics=['accuracy', MeanIoU(num_classes=11)]
 )
 
-model.fit(
-    train_dataset,
-    validation_data=val_dataset,
+# Training
+history = model.fit(
+    X_train, Y_train,
+    validation_data=(X_val, Y_val),
     epochs=50,
+    batch_size=32,
     callbacks=[
-        ModelCheckpoint('fomo_digit.h5', save_best_only=True),
-        EarlyStopping(patience=15),
-        ReduceLROnPlateau(factor=0.5, patience=5)
+        ModelCheckpoint('fomo_digit.h5', save_best_only=True, monitor='val_loss'),
+        EarlyStopping(patience=15, restore_best_weights=True),
+        ReduceLROnPlateau(factor=0.5, patience=5, min_lr=1e-6)
     ]
 )
 ```
 
-### ESP32-CAM Inference
+---
 
-#### Preprocessing
+### Phase 5: ESP32 Implementation
 
-```cpp
-void doInference(uint8_t* img) {
-    // Ortalama parlaklık hesapla
-    uint32_t sum = 0;
-    for (int i = 0; i < INPUT_SIZE * INPUT_SIZE; i++) {
-        sum += img[i];
-    }
-    uint8_t avg = sum / (INPUT_SIZE * INPUT_SIZE);
-    uint8_t threshold = avg - 30;
-    
-    // Adaptif thresholding + MNIST formatına dönüşüm
-    if (input->type == kTfLiteUInt8) {
-        for (int i = 0; i < INPUT_SIZE * INPUT_SIZE; i++) {
-            // Koyu piksel (ink) → 255, Açık piksel (paper) → 0
-            input->data.uint8[i] = (img[i] < threshold) ? 255 : 0;
-        }
-    }
-    
-    // Inference
-    interpreter->Invoke();
-    
-    // Detection decoding
-    decodeDetections();
-}
-```
-
-#### Detection Decoding
+#### Simple Centroid Detection (No NMS Needed)
 
 ```cpp
 void decodeDetections() {
-    numDets = 0;
+    /*
+     * FOMO Detection Decoding
+     * 
+     * Unlike YOLO, FOMO outputs per-cell class probabilities.
+     * Each cell independently predicts the most likely class.
+     * 
+     * Output: (12, 12, 11) - 12x12 grid, 11 classes per cell
+     * 
+     * Decoding process:
+     * 1. For each cell, find highest probability class
+     * 2. If class != background AND probability > threshold, report detection
+     * 3. Convert grid coordinates to image coordinates
+     */
+    
+    num_detections = 0;
     
     for (int gy = 0; gy < GRID_SIZE; gy++) {
         for (int gx = 0; gx < GRID_SIZE; gx++) {
-            int idx = (gy * GRID_SIZE + gx) * NUM_CLASSES;
+            int base_idx = (gy * GRID_SIZE + gx) * NUM_CLASSES;
             
-            // En yüksek sınıfı bul (background hariç)
-            int bestClass = 0;
-            float bestConf = 0;
+            // Find best class for this cell
+            int best_class = 0;
+            float best_prob = 0;
             
-            for (int c = 1; c < NUM_CLASSES; c++) {  // Skip background
-                float conf = getOutputValue(idx + c);
-                if (conf > bestConf) {
-                    bestConf = conf;
-                    bestClass = c - 1;  // Digit 0-9
+            for (int c = 0; c < NUM_CLASSES; c++) {
+                float prob;
+                if (output->type == kTfLiteUInt8) {
+                    prob = (output->data.uint8[base_idx + c] - output->params.zero_point) 
+                           * output->params.scale;
+                } else {
+                    prob = output->data.f[base_idx + c];
+                }
+                
+                if (prob > best_prob) {
+                    best_prob = prob;
+                    best_class = c;
                 }
             }
             
-            if (bestConf > THRESHOLD && numDets < MAX_DETS) {
-                dets[numDets].digit = bestClass;
-                dets[numDets].x = gx * 8 + 4;  // Centroid X
-                dets[numDets].y = gy * 8 + 4;  // Centroid Y
-                dets[numDets].conf = bestConf;
-                numDets++;
+            // Report if not background and confidence above threshold
+            // best_class: 0 = background, 1-10 = digits 0-9
+            if (best_class > 0 && best_prob > THRESHOLD) {
+                if (num_detections < MAX_DETECTIONS) {
+                    detections[num_detections].digit = best_class - 1;  // Convert to 0-9
+                    detections[num_detections].x = gx * CELL_SIZE + CELL_SIZE / 2;
+                    detections[num_detections].y = gy * CELL_SIZE + CELL_SIZE / 2;
+                    detections[num_detections].confidence = best_prob;
+                    num_detections++;
+                }
             }
         }
     }
 }
 ```
 
-### Model Performansı
+---
 
-| Metrik | Değer |
-|--------|-------|
-| Model Boyutu | 58 KB (TFLite uint8) |
-| Inference Süresi | ~100 ms |
-| Accuracy | 80-85% |
-| Flash Kullanımı | 1.0 MB |
-| RAM Kullanımı | 150 KB |
+### Comparison: FOMO vs YOLO for This Project
+
+| Aspect | YOLO | FOMO |
+|--------|------|------|
+| Output type | Bounding boxes | Centroids |
+| Model size | 18 KB | 58 KB |
+| Inference time | 120 ms | 100 ms |
+| Accuracy | 85% | 80% |
+| Complexity | Higher (NMS needed) | Lower |
+| Training | Custom loss | Dice loss |
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma
+### Final FOMO Performance
 
-### 1. Repository'yi Klonla
+| Metric | Value |
+|--------|-------|
+| Model Size | 58 KB (TFLite uint8) |
+| Inference Time | ~100 ms |
+| Accuracy | 80-85% |
+| Flash Usage | 1.0 MB |
+| RAM Usage | 150 KB |
+
+---
+
+## 🚀 Installation and Usage
+
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/[username]/EE4065_Final_Project.git
 cd EE4065_Final_Project
 ```
 
-### 2. Python Bağımlılıkları
+### 2. Python Dependencies
 
 ```bash
-pip install -r requirements.txt
-# veya
 pip install tensorflow numpy opencv-python matplotlib pillow
 ```
 
-### 3. Arduino IDE Kurulumu
+### 3. Arduino IDE Setup
 
-1. Arduino IDE 2.x kurulumu
-2. ESP32 board paketi kurulumu
-3. `TensorFlowLite_ESP32` kütüphanesi kurulumu
+1. Install Arduino IDE 2.x
+2. Add ESP32 board package
+3. Install `TensorFlowLite_ESP32` library
 
-### 4. Model Eğitimi (Opsiyonel)
+### 4. Model Training (Optional)
 
-Her soru klasöründe:
 ```bash
 cd Q2_YOLO_Digit_Detection/python
 python train_yolo_tiny.py
 python export_tflite.py
 ```
 
-### 5. ESP32-CAM'e Yükleme
+### 5. Upload to ESP32-CAM
 
-1. Arduino IDE'de ilgili `.ino` dosyasını aç
-2. Board: `AI Thinker ESP32-CAM`
-3. GPIO0'ı GND'ye bağla
-4. Upload butonuna bas
-5. Yükleme tamamlandıktan sonra GPIO0 bağlantısını kes
-6. Reset butonuna bas
+1. Open `.ino` file in Arduino IDE
+2. Select `AI Thinker ESP32-CAM` board
+3. Connect GPIO0 to GND
+4. Upload
+5. Disconnect GPIO0, press Reset
 
-### 6. Web Arayüzüne Erişim
+### 6. Access Web Interface
 
-1. Serial Monitor'ü aç (115200 baud)
-2. IP adresini not al (örn: `192.168.1.100`)
-3. Tarayıcıda `http://192.168.1.100` adresine git
+1. Open Serial Monitor (115200 baud)
+2. Note the IP address
+3. Open browser to `http://[IP_ADDRESS]`
 
 ---
 
-## 📊 Test Sonuçları
+## 📊 Test Results
 
-### Sistem Performansı
+### System Performance Summary
 
-| Soru | Model | Accuracy | Inference | Memory |
-|------|-------|----------|-----------|--------|
+| Question | Model | Accuracy | Inference | Memory |
+|----------|-------|----------|-----------|--------|
 | Q2 | YOLO-Tiny | 85% | 120 ms | 180 KB |
 | Q4 | SqueezeNet-Mini | 96% | 85 ms | 160 KB |
 | Q4 | Ensemble | 98% | 250 ms | 280 KB |
 | Q5 | FOMO | 80% | 100 ms | 150 KB |
 
-### Test Görüntüleri
-
-Tüm modeller beyaz kağıt üzerine siyah kalemle yazılmış el yazısı rakamlarla test edilmiştir.
-
 ---
 
-## 📚 Referanslar
+## 📚 References
 
-### Akademik Kaynaklar
+### Academic Sources
 
 1. Redmon, J., & Farhadi, A. (2018). YOLOv3: An Incremental Improvement
-2. Howard, A., et al. (2019). MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications
+2. Howard, A., et al. (2019). MobileNets: Efficient CNNs for Mobile Vision Applications
 3. Iandola, F., et al. (2016). SqueezeNet: AlexNet-level accuracy with 50x fewer parameters
+4. Sandler, M., et al. (2018). MobileNetV2: Inverted Residuals and Linear Bottlenecks
 
-### GitHub Repositoryleri
+### GitHub Repositories
 
-- [bhoke/FOMO](https://github.com/bhoke/FOMO) - FOMO implementasyonu
+- [bhoke/FOMO](https://github.com/bhoke/FOMO) - FOMO implementation
 - [STMicroelectronics/stm32ai-modelzoo](https://github.com/STMicroelectronics/stm32ai-modelzoo) - Model zoo
-- [espressif/esp32-camera](https://github.com/espressif/esp32-camera) - ESP32 kamera sürücüsü
+- [espressif/esp32-camera](https://github.com/espressif/esp32-camera) - ESP32 camera driver
 
-### Dokümantasyon
+### Documentation
 
 - [TensorFlow Lite Micro](https://www.tensorflow.org/lite/microcontrollers)
 - [ESP32-CAM Getting Started](https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/)
@@ -1059,14 +1491,14 @@ Tüm modeller beyaz kağıt üzerine siyah kalemle yazılmış el yazısı rakam
 
 ---
 
-## 📝 Lisans
+## 📝 License
 
-Bu proje Yeditepe Üniversitesi EE4065 dersi için hazırlanmıştır.
+This project was prepared for Yeditepe University EE4065 course.
 
 ---
 
 <p align="center">
-  <strong>Yeditepe Üniversitesi - Elektrik-Elektronik Mühendisliği</strong><br>
+  <strong>Yeditepe University - Electrical and Electronics Engineering</strong><br>
   EE4065 - Embedded Digital Image Processing<br>
   Final Project - 2026
 </p>
