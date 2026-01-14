@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Language-Python%20%7C%20C%2B%2B-green" alt="Languages">
 </p>
 
-> **Yeditepe University - Electrical and Electronics Engineering Department**  
+> **Marmara University - Electrical and Electronics Engineering Department**  
 > **Embedded Digital Image Processing Final Project**
 
 This project implements various image processing and machine learning techniques on the ESP32-CAM module for handwritten digit recognition and detection systems.
