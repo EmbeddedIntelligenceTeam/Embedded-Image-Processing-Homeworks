@@ -200,29 +200,74 @@ void doInference(uint8_t* img) {
 // Simple HTML
 const char* html = R"HTML(
 <!DOCTYPE html><html><head>
-<title>FOMO Debug</title>
-<style>body{font-family:sans-serif;background:#222;color:#fff;padding:20px}
-img{border:2px solid #0ff;margin:10px 0}
-button{padding:15px 30px;font-size:18px;background:#0f0;border:none;cursor:pointer}
-pre{background:#333;padding:10px;margin:10px 0}</style>
+<title>FOMO Digit Detection</title>
+<style>
+body{font-family:sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:20px;min-height:100vh;margin:0}
+.container{max-width:500px;margin:0 auto}
+h1{color:#0ff;text-align:center;font-size:1.5em}
+img{width:100%;border:3px solid #0ff;border-radius:8px;image-rendering:pixelated}
+.btn{width:100%;padding:15px;font-size:16px;border:none;border-radius:8px;cursor:pointer;margin:5px 0;font-weight:bold}
+.detect-btn{background:linear-gradient(90deg,#00ff88,#00ccff);color:#000}
+.continue-btn{background:linear-gradient(90deg,#ff6b6b,#ffa500);color:#fff;display:none}
+.card{background:rgba(255,255,255,0.1);border-radius:12px;padding:15px;margin:10px 0}
+pre{background:#333;padding:10px;border-radius:8px;margin:10px 0;font-size:12px;overflow-x:auto}
+#status{text-align:center;color:#888;font-size:12px}
+</style>
 </head><body>
-<h1>FOMO Digit Detection - Debug</h1>
-<img id="cam" width="288" height="288">
-<br><button onclick="run()">DETECT</button>
+<div class="container">
+<h1>FOMO Digit Detection</h1>
+<div class="card">
+<img id="cam" alt="Camera">
+<div id="status">Live camera feed</div>
+</div>
+<button class="btn detect-btn" id="detectBtn" onclick="detect()">DETECT DIGITS</button>
+<button class="btn continue-btn" id="continueBtn" onclick="resume()">CONTINUE (Live View)</button>
+<div class="card">
 <pre id="out">Click DETECT to run inference</pre>
+</div>
+</div>
 <script>
 var n=0;
-function run(){
+var autoRefresh=true;
+var refreshTimer=null;
+
+function startLive(){
+  autoRefresh=true;
+  document.getElementById("status").innerText="Live camera feed";
+  document.getElementById("detectBtn").style.display="block";
+  document.getElementById("continueBtn").style.display="none";
+  refreshTimer=setInterval(function(){
+    if(autoRefresh){
+      n++;
+      document.getElementById("cam").src="/img?"+n;
+    }
+  },1000);
+}
+
+function stopLive(){
+  autoRefresh=false;
+  if(refreshTimer) clearInterval(refreshTimer);
+  document.getElementById("status").innerText="Detection complete - camera paused";
+  document.getElementById("detectBtn").style.display="none";
+  document.getElementById("continueBtn").style.display="block";
+}
+
+function detect(){
+  document.getElementById("status").innerText="Processing...";
   n++;
   document.getElementById("cam").src="/img?"+n;
   fetch("/run").then(r=>r.text()).then(t=>{
     document.getElementById("out").innerText=t;
+    stopLive();
   });
 }
-setInterval(function(){
-  n++;
-  document.getElementById("cam").src="/img?"+n;
-},1000);
+
+function resume(){
+  startLive();
+}
+
+// Start live feed on page load
+startLive();
 </script>
 </body></html>
 )HTML";

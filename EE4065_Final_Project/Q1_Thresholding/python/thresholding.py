@@ -168,12 +168,14 @@ if __name__ == "__main__":
     print("=" * 60)
     print(f"\nTarget object size: {TARGET_OBJECT_SIZE} pixels")
     
-    # Option 1: Load image from ESP32-CAM or file
-    # image = cv2.imread("your_image.jpg")
+    # Load Lena grayscale image
+    print("\nLoading Lena_gray.png...")
+    image = cv2.imread("Lena_gray.png", cv2.IMREAD_GRAYSCALE)
     
-    # Option 2: Create synthetic test image
-    print("\nCreating synthetic test image...")
-    image = create_test_image(320, 240, object_pixels=TARGET_OBJECT_SIZE)
+    if image is None:
+        print("ERROR: Could not load Lena_gray.png!")
+        print("Creating synthetic test image as fallback...")
+        image = create_test_image(320, 240, object_pixels=TARGET_OBJECT_SIZE)
     
     # Apply thresholding
     print("Applying adaptive thresholding...")
