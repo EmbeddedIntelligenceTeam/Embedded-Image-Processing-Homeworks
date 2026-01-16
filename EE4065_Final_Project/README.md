@@ -1,4 +1,4 @@
-# EE4065 Embedded Digital Image Processing - Final Project
+﻿# EE4065 Embedded Digital Image Processing - Final Project
 
 > **Marmara University - Department of Electrical and Electronics Engineering**  
 > **Authors: Yusuf Zivaroglu, Taner Kahyaoglu**  
@@ -99,6 +99,22 @@ uint8_t findThresholdBySize(uint8_t* image, int width, int height, int targetPix
 ### Results
 - Python (Lena 512x512): Threshold=213, Extracted=1066, Accuracy=93.8%
 - ESP32 (320x240): Threshold=252, Extracted=1121, Accuracy=87.9%
+
+### Screenshots
+
+![Q1 Python Thresholding](images/q1_python_thresholding.png)
+*Python ile Lena goruntusunde thresholding. Histogram analizi ve binary mask olusturma.*
+
+![Q1 ESP32 Thresholding](images/q1_esp32_thresholding.png)
+*ESP32-CAM web arayuzu ile gercek zamanli thresholding.*
+
+### Screenshots
+
+![Q1 Python Thresholding](images/q1_python_thresholding.png)
+*Python ile Lena görüntüsü üzerinde size-based thresholding. Sol üst: Orijinal görüntü. Sağ üst: Histogram ve threshold çizgisi. Sol alt: Binary maske. Sağ alt: Çıkarılan bölge.*
+
+![Q1 ESP32 Thresholding](images/q1_esp32_thresholding.png)
+*ESP32-CAM web arayüzü ile gerçek zamanlı thresholding sonucu.*
 
 ---
 
@@ -221,6 +237,28 @@ void decodeDetections(int8_t* output, Detection* detections, int* count) {
 - Accuracy: 85%
 - Confidence: 65-99%
 
+
+### Screenshots
+
+![YOLO Detection 1](images/q2_yolo_detection1.png)
+*YOLO tespit: 4 rakam bounding box ile tespit edildi (65-99% confidence).*
+
+![YOLO Detection 2](images/q2_yolo_detection2.png)
+*YOLO tespit: 3 rakam yuksek guven skoru ile tespit edildi.*
+
+![YOLO Detection 3](images/q2_yolo_detection3.png)
+*YOLO tespit: Karisik sahnede 6 rakam basariyla tespit edildi.*
+### Screenshots
+
+![YOLO Detection 1](images/q2_yolo_detection1.png)
+*YOLO tespit sonucu: 4 rakam (0, 3, 5, 8) bounding box ve confidence skorları ile tespit edildi.*
+
+![YOLO Detection 2](images/q2_yolo_detection2.png)
+*YOLO tespit sonucu: 3 rakam yüksek güven skoru (%97+) ile tespit edildi.*
+
+![YOLO Detection 3](images/q2_yolo_detection3.png)
+*YOLO tespit sonucu: Karmaşık sahnede 6 rakam tespit edildi.*
+
 ---
 
 ## Question 3: Bilinear Interpolation
@@ -307,6 +345,22 @@ void bilinearResize(uint8_t* src, int srcW, int srcH,
 - Upsample 1.5x (320x240 -> 480x360): 85 ms
 - Downsample 0.67x (320x240 -> 213x160): 35 ms
 
+
+### Screenshots
+
+![Q3 Python Scaling](images/q3_python_scaling.png)
+*Python ile MNIST rakam olceklendirme: Orijinal 28x28, 1.5x upsample, 0.67x downsample.*
+
+![Q3 ESP32 Scaling](images/q3_esp32_scaling.png)
+*ESP32-CAM gercek zamanli kamera goruntusu olceklendirme.*
+### Screenshots
+
+![Q3 Python Scaling](images/q3_python_scaling.png)
+*Python ile MNIST rakamı ölçeklendirme. Sol: Orijinal 28x28. Orta: 1.5x upsampling (42x42). Sağ: Downsampling (18x18).*
+
+![Q3 ESP32 Scaling](images/q3_esp32_scaling.png)
+*ESP32-CAM gerçek zamanlı ölçeklendirme. 320x240 kamera görüntüsü 1.5x ve 0.67x faktörleri ile ölçeklendirildi.*
+
 ---
 
 ## Question 4: Multi-Model CNN
@@ -386,6 +440,14 @@ int runEnsemble(int8_t* input_data) {
 
 ### FOMO vs YOLO
 
+
+### Screenshots
+
+![Q4 CNN Result 1](images/q4_cnn_result1.png)
+*Multi-model CNN: Rakam 5 - 4 model tarafindan taninan sonuc.*
+
+![Q4 CNN Result 2](images/q4_cnn_result2.png)
+*Ensemble voting: Rakam 0 - tum modeller ayni tahmin uzerinde hemfikir.*
 | Aspect | YOLO | FOMO |
 |--------|------|------|
 | Output | Bounding boxes | Centroids only |
@@ -480,6 +542,40 @@ void decodeFOMODetections(int8_t* output, Detection* dets, int* count) {
 - Model Size: 58 KB
 - Inference: 100 ms
 - Confidence: 91-99.6%
+
+### Screenshots
+
+![FOMO Detection 1](images/q5_fomo_detection1.png)
+*FOMO tespit: 5 rakam %99.6 güven skoru ile tespit edildi.*
+
+![FOMO Detection 2](images/q5_fomo_detection2.png)
+*FOMO tespit: 4 rakam (2, 4, 7, 8) centroid noktaları ile gösterildi.*
+
+
+### Screenshots
+
+![FOMO Detection 1](images/q5_fomo_detection1.png)
+*FOMO: 5 rakam %99.6 guven skoru ile tespit edildi.*
+
+![FOMO Detection 2](images/q5_fomo_detection2.png)
+*FOMO: 4 rakam centroid noktalari ile gosterildi.*
+
+![FOMO Detection 3](images/q5_fomo_detection3.png)
+*FOMO: 3 rakam yuksek guven ile tespit edildi.*
+
+![FOMO Detection 4](images/q5_fomo_detection4.png)
+*FOMO: Tekrarlayan rakamlar dogru sekilde tespit edildi.*
+
+![FOMO Detection 5](images/q5_fomo_detection5.png)
+*FOMO: Tek rakam izole ortamda %99.6 guven ile tespit.*
+![FOMO Detection 3](images/q5_fomo_detection3.png)
+*FOMO tespit: 3 rakam (1, 4, 9) yüksek güven ile tespit edildi.*
+
+![FOMO Detection 4](images/q5_fomo_detection4.png)
+*FOMO tespit: Tekrarlayan rakamlar (7, 5, 3) doğru şekilde tespit edildi.*
+
+![FOMO Detection 5](images/q5_fomo_detection5.png)
+*FOMO tespit: Tek rakam "5" %99.6 güven skoru ile - izole rakamlar için de başarılı.*
 
 ---
 
@@ -1263,3 +1359,4 @@ EE4065_Final_Project/
 | 2.0 | 2026-01-16 | Final documentation and testing |
 
 ---
+
