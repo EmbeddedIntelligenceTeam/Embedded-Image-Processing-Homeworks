@@ -108,14 +108,6 @@ uint8_t findThresholdBySize(uint8_t* image, int width, int height, int targetPix
 ![Q1 ESP32 Thresholding](images/q1_esp32_thresholding.png)
 *ESP32-CAM web arayuzu ile gercek zamanli thresholding.*
 
-### Screenshots
-
-![Q1 Python Thresholding](images/q1_python_thresholding.png)
-*Python ile Lena görüntüsü üzerinde size-based thresholding. Sol üst: Orijinal görüntü. Sağ üst: Histogram ve threshold çizgisi. Sol alt: Binary maske. Sağ alt: Çıkarılan bölge.*
-
-![Q1 ESP32 Thresholding](images/q1_esp32_thresholding.png)
-*ESP32-CAM web arayüzü ile gerçek zamanlı thresholding sonucu.*
-
 ---
 
 ## Question 2: YOLO Digit Detection
