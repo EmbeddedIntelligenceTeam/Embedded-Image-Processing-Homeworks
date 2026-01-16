@@ -347,12 +347,6 @@ void bilinearResize(uint8_t* src, int srcW, int srcH,
 *ESP32-CAM gercek zamanli kamera goruntusu olceklendirme.*
 ### Screenshots
 
-![Q3 Python Scaling](images/q3_python_scaling.png)
-*Python ile MNIST rakamı ölçeklendirme. Sol: Orijinal 28x28. Orta: 1.5x upsampling (42x42). Sağ: Downsampling (18x18).*
-
-![Q3 ESP32 Scaling](images/q3_esp32_scaling.png)
-*ESP32-CAM gerçek zamanlı ölçeklendirme. 320x240 kamera görüntüsü 1.5x ve 0.67x faktörleri ile ölçeklendirildi.*
-
 ---
 
 ## Question 4: Multi-Model CNN
